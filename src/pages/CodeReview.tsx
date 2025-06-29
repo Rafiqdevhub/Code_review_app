@@ -4,6 +4,8 @@ import { CodeAnalysis } from "@/components/CodeAnalysis";
 import { BestPractices } from "@/components/BestPractices";
 import { CodeEditor } from "@/components/CodeEditor";
 import { ResultsDisplay, AnalysisResults } from "@/components/ResultsDisplay";
+import { codeAnalysisApi, isApiError } from "@/services/api";
+import { toast } from "@/hooks/use-toast";
 import {
   FileText,
   Code,
@@ -54,62 +56,82 @@ const CodeReview = () => {
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
+    setAnalysisResults(null);
 
-    // Simulate analysis
-    setTimeout(() => {
-      const mockResults: AnalysisResults = {
-        summary: {
-          score: 78,
-          issues: 12,
-          suggestions: 8,
-          securityIssues: 2,
-        },
-        issues: [
-          {
-            id: "1",
-            severity: "high",
-            type: "security",
-            title: "Potential XSS vulnerability",
-            description:
-              "User input is not properly sanitized before rendering",
-            line: 45,
-            suggestion: "Use proper input sanitization library",
-          },
-          {
-            id: "2",
-            severity: "medium",
-            type: "performance",
-            title: "Inefficient loop",
-            description:
-              "Consider using Array.prototype.map() instead of for loop",
-            line: 23,
-            suggestion: "Replace with functional programming approach",
-          },
-        ],
-        metrics: {
-          complexity: 6.2,
-          maintainability: 78,
-          testCoverage: 45,
-          performance: 82,
-        },
-        security: {
-          vulnerabilities: [
-            {
-              id: "vuln-1",
-              severity: "high",
-              title: "Cross-Site Scripting (XSS)",
-              description: "Potential XSS vulnerability in user input handling",
-              recommendation:
-                "Implement proper input validation and output encoding",
-            },
-          ],
-          score: 72,
-        },
-      };
+    try {
+      let results: AnalysisResults;
 
-      setAnalysisResults(mockResults);
+      if (codeFiles.length > 0) {
+        // Analyze uploaded files
+        const files = codeFiles.map((codeFile) => {
+          const file = new File([codeFile.content], codeFile.name, {
+            type: "text/plain",
+          });
+          return file;
+        });
+
+        results = await codeAnalysisApi.analyzeFiles(files);
+
+        toast({
+          title: "Analysis Complete",
+          description: `Successfully analyzed ${codeFiles.length} file(s).`,
+        });
+      } else if (manualCode.trim()) {
+        // Analyze manual code input
+        results = await codeAnalysisApi.analyzeText({
+          code: manualCode,
+          filename: `${fileName}.${getFileExtension(selectedLanguage)}`,
+        });
+
+        toast({
+          title: "Analysis Complete",
+          description: "Successfully analyzed your code.",
+        });
+      } else {
+        toast({
+          title: "No Code to Analyze",
+          description: "Please upload files or enter code manually.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setAnalysisResults(results);
+    } catch (error) {
+      console.error("Analysis failed:", error);
+
+      let errorMessage = "Failed to analyze code. Please try again.";
+      if (isApiError(error)) {
+        errorMessage = error.message;
+      }
+
+      toast({
+        title: "Analysis Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
+  };
+
+  const getFileExtension = (language: string): string => {
+    const extensions: Record<string, string> = {
+      javascript: "js",
+      typescript: "ts",
+      python: "py",
+      java: "java",
+      cpp: "cpp",
+      c: "c",
+      csharp: "cs",
+      php: "php",
+      ruby: "rb",
+      go: "go",
+      rust: "rs",
+      swift: "swift",
+      kotlin: "kt",
+    };
+    return extensions[language] || "txt";
   };
 
   const handleSave = () => {

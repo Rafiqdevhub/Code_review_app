@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { healthApi, isApiError } from "@/services/api";
 import {
   Code,
   Shield,
@@ -28,6 +29,8 @@ interface ApiStatus {
   status: "online" | "offline" | "loading";
   responseTime: number;
   lastCheck: Date;
+  version?: string;
+  endpoints?: string[];
 }
 
 const Home = () => {
@@ -38,31 +41,37 @@ const Home = () => {
   });
 
   useEffect(() => {
-    // Simulate API status check
+    // Check API status on component mount
     const checkApiStatus = async () => {
       const start = Date.now();
       try {
-        // Simulate API call - replace with actual endpoint
-        await new Promise((resolve) =>
-          setTimeout(resolve, 200 + Math.random() * 300)
-        );
+        const response = await healthApi.checkStatus();
         const responseTime = Date.now() - start;
+
         setApiStatus({
           status: "online",
           responseTime,
           lastCheck: new Date(),
+          version: response.version,
+          endpoints: response.endpoints,
         });
-      } catch {
+      } catch (error) {
+        console.error("API status check failed:", error);
+        const responseTime = Date.now() - start;
+
         setApiStatus({
           status: "offline",
-          responseTime: 0,
+          responseTime,
           lastCheck: new Date(),
         });
       }
     };
 
     checkApiStatus();
-    const interval = setInterval(checkApiStatus, 30000); // Check every 30 seconds
+
+    // Check API status every 30 seconds
+    const interval = setInterval(checkApiStatus, 30000);
+
     return () => clearInterval(interval);
   }, []);
 

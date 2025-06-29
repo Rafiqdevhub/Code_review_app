@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { chatApi, isApiError } from "@/services/api";
+import { toast } from "@/hooks/use-toast";
 import {
   Send,
   Bot,
@@ -46,6 +48,7 @@ interface ChatThread {
   messages: Message[];
   createdAt: Date;
   lastUpdated: Date;
+  backendThreadId?: string; // For backend thread tracking
 }
 
 const AiChat = () => {
@@ -181,24 +184,21 @@ const AiChat = () => {
       )
     );
 
+    const messageContent = inputValue.trim();
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "That's a great question! Let me analyze this code pattern for you...",
-        "I can see a few potential improvements here. First, consider using more descriptive variable names...",
-        "This looks like a performance optimization opportunity. You could use memoization to cache results...",
-        "Security-wise, I'd recommend validating the input parameters before processing...",
-        "From a maintainability perspective, breaking this into smaller functions would help...",
-        "This is a common pattern, but there's a more elegant solution using modern JavaScript features...",
-      ];
+    try {
+      // Send message to backend API
+      const response = await chatApi.sendMessage({
+        message: messageContent,
+        threadId: activeThread.backendThreadId,
+      });
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "assistant",
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: response.message,
         timestamp: new Date(),
       };
 
@@ -209,13 +209,50 @@ const AiChat = () => {
                 ...thread,
                 messages: [...thread.messages, assistantMessage],
                 lastUpdated: new Date(),
+                backendThreadId: response.threadId, // Store backend thread ID
               }
             : thread
         )
       );
 
       setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+
+      let errorMessage = "Failed to send message. Please try again.";
+      if (isApiError(error)) {
+        errorMessage = error.message;
+      }
+
+      toast({
+        title: "Message Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
+      // Add error message to chat
+      const errorAssistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant",
+        content:
+          "Sorry, I'm having trouble responding right now. Please try again later.",
+        timestamp: new Date(),
+      };
+
+      setThreads((prev) =>
+        prev.map((thread) =>
+          thread.id === activeThreadId
+            ? {
+                ...thread,
+                messages: [...thread.messages, errorAssistantMessage],
+                lastUpdated: new Date(),
+              }
+            : thread
+        )
+      );
+
+      setIsTyping(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
