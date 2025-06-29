@@ -1,17 +1,22 @@
-
-import React from 'react';
-import { Code2, FileText, Loader2 } from 'lucide-react';
+import React from "react";
+import { Code2, FileText, Loader2 } from "lucide-react";
 
 interface CodeAnalysisProps {
   code: string;
   fileName: string;
   isAnalyzing: boolean;
+  language?: string;
 }
 
-export const CodeAnalysis: React.FC<CodeAnalysisProps> = ({ code, fileName, isAnalyzing }) => {
-  const lineCount = code.split('\n').length;
+export const CodeAnalysis: React.FC<CodeAnalysisProps> = ({
+  code,
+  fileName,
+  isAnalyzing,
+  language = "javascript",
+}) => {
+  const lineCount = code.split("\n").length;
   const charCount = code.length;
-  const wordCount = code.split(/\s+/).filter(word => word.length > 0).length;
+  const wordCount = code.split(/\s+/).filter((word) => word.length > 0).length;
 
   if (!code.trim()) {
     return (
@@ -22,7 +27,9 @@ export const CodeAnalysis: React.FC<CodeAnalysisProps> = ({ code, fileName, isAn
         </div>
         <div className="text-center py-12">
           <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">Upload a file or enter code to see analysis</p>
+          <p className="text-gray-500">
+            Upload a file or enter code to see analysis
+          </p>
         </div>
       </div>
     );
@@ -62,7 +69,7 @@ export const CodeAnalysis: React.FC<CodeAnalysisProps> = ({ code, fileName, isAn
             {fileName}
           </span>
         </div>
-        
+
         <div className="relative">
           <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm max-h-96 overflow-y-auto">
             <code>{code}</code>
@@ -83,28 +90,31 @@ export const CodeAnalysis: React.FC<CodeAnalysisProps> = ({ code, fileName, isAn
         <div className="mt-6 space-y-3">
           <h3 className="text-sm font-medium text-gray-700">Quick Insights</h3>
           <div className="space-y-2">
-            {code.includes('function') && (
+            {code.includes("function") && (
               <div className="flex items-center space-x-2 text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span className="text-green-700">Functions detected</span>
               </div>
             )}
-            {code.includes('class') && (
+            {code.includes("class") && (
               <div className="flex items-center space-x-2 text-sm">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                 <span className="text-blue-700">Classes found</span>
               </div>
             )}
-            {code.includes('import') || code.includes('require') && (
-              <div className="flex items-center space-x-2 text-sm">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span className="text-purple-700">Dependencies imported</span>
-              </div>
-            )}
+            {code.includes("import") ||
+              (code.includes("require") && (
+                <div className="flex items-center space-x-2 text-sm">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-purple-700">Dependencies imported</span>
+                </div>
+              ))}
             {lineCount > 100 && (
               <div className="flex items-center space-x-2 text-sm">
                 <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                <span className="text-orange-700">Large file - consider splitting</span>
+                <span className="text-orange-700">
+                  Large file - consider splitting
+                </span>
               </div>
             )}
           </div>
