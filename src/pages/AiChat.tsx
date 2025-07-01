@@ -34,6 +34,162 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const formatMessageContent = (content: string) => {
+  const lines = content.split("\n");
+  const elements: React.ReactNode[] = [];
+  let currentCodeBlock: string[] = [];
+  let inCodeBlock = false;
+  let currentList: string[] = [];
+  let inList = false;
+
+  const flushCodeBlock = () => {
+    if (currentCodeBlock.length > 0) {
+      elements.push(
+        <pre
+          key={elements.length}
+          className="bg-gray-900 text-gray-100 p-3 rounded-md overflow-x-auto my-2 text-sm"
+        >
+          <code>{currentCodeBlock.join("\n")}</code>
+        </pre>
+      );
+      currentCodeBlock = [];
+    }
+  };
+
+  const flushList = () => {
+    if (currentList.length > 0) {
+      elements.push(
+        <ul
+          key={elements.length}
+          className="list-disc list-inside space-y-1 my-2 ml-4"
+        >
+          {currentList.map((item, idx) => (
+            <li key={idx} className="text-sm">
+              {item}
+            </li>
+          ))}
+        </ul>
+      );
+      currentList = [];
+    }
+  };
+
+  lines.forEach((line, index) => {
+    const trimmedLine = line.trim();
+
+    // Check for code block markers
+    if (trimmedLine.startsWith("```")) {
+      if (inCodeBlock) {
+        flushCodeBlock();
+        inCodeBlock = false;
+      } else {
+        if (inList) {
+          flushList();
+          inList = false;
+        }
+        inCodeBlock = true;
+      }
+      return;
+    }
+
+    // If we're in a code block, add to it
+    if (inCodeBlock) {
+      currentCodeBlock.push(line);
+      return;
+    }
+
+    // Check for list items
+    if (trimmedLine.match(/^[-*+]\s+/) || trimmedLine.match(/^\d+\.\s+/)) {
+      if (!inList) {
+        inList = true;
+      }
+      currentList.push(
+        trimmedLine.replace(/^[-*+]\s+/, "").replace(/^\d+\.\s+/, "")
+      );
+      return;
+    } else if (inList && trimmedLine === "") {
+      // Continue list on empty lines
+      return;
+    } else if (inList) {
+      // End of list
+      flushList();
+      inList = false;
+    }
+
+    // Check for headings
+    if (trimmedLine.startsWith("##")) {
+      const headingText = trimmedLine.replace(/^##\s*/, "");
+      elements.push(
+        <h3
+          key={elements.length}
+          className="text-lg font-semibold mt-4 mb-2 text-gray-900"
+        >
+          {headingText}
+        </h3>
+      );
+      return;
+    }
+
+    if (trimmedLine.startsWith("#")) {
+      const headingText = trimmedLine.replace(/^#\s*/, "");
+      elements.push(
+        <h2
+          key={elements.length}
+          className="text-xl font-bold mt-4 mb-2 text-gray-900"
+        >
+          {headingText}
+        </h2>
+      );
+      return;
+    }
+
+    // Handle inline code
+    if (trimmedLine.includes("`")) {
+      const parts = trimmedLine.split(/(`[^`]+`)/);
+      const formattedParts = parts.map((part, idx) => {
+        if (part.startsWith("`") && part.endsWith("`")) {
+          return (
+            <code
+              key={idx}
+              className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono"
+            >
+              {part.slice(1, -1)}
+            </code>
+          );
+        }
+        return part;
+      });
+
+      if (trimmedLine) {
+        elements.push(
+          <p key={elements.length} className="mb-2 text-sm leading-relaxed">
+            {formattedParts}
+          </p>
+        );
+      }
+      return;
+    }
+
+    // Regular paragraph
+    if (trimmedLine) {
+      elements.push(
+        <p key={elements.length} className="mb-2 text-sm leading-relaxed">
+          {trimmedLine}
+        </p>
+      );
+    } else if (elements.length > 0) {
+      // Add spacing for empty lines
+      elements.push(<div key={elements.length} className="mb-2" />);
+    }
+  });
+
+  // Flush any remaining blocks
+  flushCodeBlock();
+  flushList();
+
+  return elements.length > 0 ? elements : [content];
+};
+
 interface Message {
   id: string;
   type: "user" | "assistant";
@@ -287,7 +443,6 @@ const AiChat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
@@ -322,7 +477,6 @@ const AiChat = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-          {/* Left Sidebar - Thread List */}
           <div className="lg:col-span-3">
             <Card className="h-full">
               <CardHeader className="pb-3">
@@ -384,7 +538,6 @@ const AiChat = () => {
             </Card>
           </div>
 
-          {/* Right Panel - Chat Interface */}
           <div className="lg:col-span-9">
             <Card className="h-full flex flex-col">
               <CardHeader className="pb-3">
@@ -400,7 +553,6 @@ const AiChat = () => {
 
               {activeThread && (
                 <>
-                  {/* Messages Area */}
                   <CardContent className="flex-1 p-0">
                     <ScrollArea className="h-[calc(100vh-400px)] px-6">
                       <div className="space-y-6 py-4">
@@ -436,28 +588,37 @@ const AiChat = () => {
                                 className={`p-3 rounded-lg ${
                                   message.type === "user"
                                     ? "bg-blue-50 border border-blue-200"
-                                    : "bg-gray-50 border border-gray-200"
+                                    : "bg-white border border-gray-200 shadow-sm"
                                 }`}
                               >
-                                <p className="text-sm text-gray-900 whitespace-pre-wrap">
-                                  {message.content}
-                                </p>
+                                <div className="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">
+                                  {formatMessageContent(message.content)}
+                                </div>
 
                                 {message.type === "assistant" && (
-                                  <div className="flex items-center space-x-2 mt-3 pt-2 border-t border-gray-200">
+                                  <div className="flex items-center space-x-2 mt-3 pt-2 border-t border-gray-100">
                                     <Button
                                       variant="ghost"
                                       size="sm"
                                       onClick={() =>
                                         copyMessage(message.content)
                                       }
+                                      className="text-gray-600 hover:text-gray-900"
                                     >
                                       <Copy className="h-3 w-3" />
                                     </Button>
-                                    <Button variant="ghost" size="sm">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-gray-600 hover:text-gray-900"
+                                    >
                                       <ThumbsUp className="h-3 w-3" />
                                     </Button>
-                                    <Button variant="ghost" size="sm">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-gray-600 hover:text-gray-900"
+                                    >
                                       <ThumbsDown className="h-3 w-3" />
                                     </Button>
                                   </div>
@@ -481,7 +642,7 @@ const AiChat = () => {
                                   Typing...
                                 </Badge>
                               </div>
-                              <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                              <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
                                 <div className="flex space-x-1">
                                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
                                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.1s]" />
@@ -499,7 +660,6 @@ const AiChat = () => {
 
                   <Separator />
 
-                  {/* Input Area */}
                   <CardContent className="p-4">
                     <div className="flex space-x-2">
                       <div className="flex-1">
@@ -509,7 +669,7 @@ const AiChat = () => {
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyPress={handleKeyPress}
                           placeholder="Ask about code quality, security, performance, or any programming question..."
-                          className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
                           rows={3}
                           disabled={isTyping}
                         />

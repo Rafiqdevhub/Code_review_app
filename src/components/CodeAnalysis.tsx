@@ -71,7 +71,7 @@ export const CodeAnalysis: React.FC<CodeAnalysisProps> = ({
         </div>
 
         <div className="relative">
-          <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm max-h-96 overflow-y-auto">
+          <pre className="bg-white text-black p-4 rounded-lg overflow-x-auto text-sm max-h-96 overflow-y-auto">
             <code>{code}</code>
           </pre>
           {isAnalyzing && (

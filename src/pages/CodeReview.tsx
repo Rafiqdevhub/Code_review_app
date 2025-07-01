@@ -6,16 +6,7 @@ import { CodeEditor } from "@/components/CodeEditor";
 import { ResultsDisplay, AnalysisResults } from "@/components/ResultsDisplay";
 import { codeAnalysisApi, isApiError } from "@/services/api";
 import { toast } from "@/hooks/use-toast";
-import {
-  FileText,
-  Code,
-  CheckCircle,
-  Settings,
-  Play,
-  ArrowLeft,
-  Save,
-  Share,
-} from "lucide-react";
+import { Code, Settings, Play, ArrowLeft, Save, Share } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,14 +33,14 @@ const CodeReview = () => {
     setCodeFiles(files);
     if (files.length > 0) {
       setActiveFile(files[0]);
-      setManualCode(""); // Clear manual input when files are uploaded
+      setManualCode("");
     }
   };
 
   const handleCodeChange = (code: string) => {
     setManualCode(code);
     if (code.trim()) {
-      setCodeFiles([]); // Clear files when manual code is entered
+      setCodeFiles([]);
       setActiveFile(null);
     }
   };
@@ -62,7 +53,6 @@ const CodeReview = () => {
       let results: AnalysisResults;
 
       if (codeFiles.length > 0) {
-        // Analyze uploaded files
         const files = codeFiles.map((codeFile) => {
           const file = new File([codeFile.content], codeFile.name, {
             type: "text/plain",
@@ -77,7 +67,6 @@ const CodeReview = () => {
           description: `Successfully analyzed ${codeFiles.length} file(s).`,
         });
       } else if (manualCode.trim()) {
-        // Analyze manual code input
         results = await codeAnalysisApi.analyzeText({
           code: manualCode,
           filename: `${fileName}.${getFileExtension(selectedLanguage)}`,
@@ -135,12 +124,10 @@ const CodeReview = () => {
   };
 
   const handleSave = () => {
-    // Implement save functionality
     console.log("Saving code...");
   };
 
   const handleShare = () => {
-    // Implement share functionality
     console.log("Sharing analysis...");
   };
 
@@ -162,7 +149,6 @@ const CodeReview = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
@@ -210,9 +196,7 @@ const CodeReview = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Panel - Input Section */}
           <div className="lg:col-span-4 space-y-6">
-            {/* Code Input Tabs */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -276,7 +260,7 @@ const CodeReview = () => {
                         type="text"
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                         placeholder="Enter filename..."
                       />
                     </div>
@@ -292,7 +276,7 @@ const CodeReview = () => {
                         id="language-select"
                         value={selectedLanguage}
                         onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                       >
                         {languages.map((lang) => (
                           <option key={lang} value={lang}>
@@ -313,7 +297,6 @@ const CodeReview = () => {
               </CardContent>
             </Card>
 
-            {/* Analysis Controls */}
             {hasCode && (
               <Card>
                 <CardContent className="pt-6">
@@ -340,7 +323,6 @@ const CodeReview = () => {
             )}
           </div>
 
-          {/* Middle Panel - Code Display */}
           <div className="lg:col-span-4">
             <CodeAnalysis
               code={currentCode}
@@ -350,7 +332,6 @@ const CodeReview = () => {
             />
           </div>
 
-          {/* Right Panel - Results */}
           <div className="lg:col-span-4">
             {analysisResults ? (
               <ResultsDisplay results={analysisResults} />

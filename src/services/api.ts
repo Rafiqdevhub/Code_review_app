@@ -1,9 +1,7 @@
 import { AnalysisResults } from "@/components/ResultsDisplay";
 
-// API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-// Backend types (matching the actual backend structure)
 export interface CodeIssue {
   type: "bug" | "warning" | "suggestion" | "security";
   severity: "low" | "medium" | "high" | "critical";
@@ -39,7 +37,6 @@ export interface BackendApiResponse<T> {
   message?: string;
 }
 
-// Frontend types for compatibility
 export interface CodeAnalysisRequest {
   code: string;
   filename?: string;
@@ -75,7 +72,6 @@ export class ApiError extends Error {
   }
 }
 
-// Generic API client
 class ApiClient {
   private baseUrl: string;
 
@@ -160,10 +156,8 @@ class ApiClient {
   }
 }
 
-// Initialize API client
 const apiClient = new ApiClient(API_BASE_URL);
 
-// Health check API
 export const healthApi = {
   async checkStatus(): Promise<{
     status: string;
@@ -192,7 +186,7 @@ export const healthApi = {
 export const codeAnalysisApi = {
   async analyzeText(request: CodeAnalysisRequest): Promise<AnalysisResults> {
     const response = await apiClient.post<BackendApiResponse<CodeReviewResult>>(
-      "/api/ai/review-text",
+      "/review-text",
       request
     );
 
@@ -214,7 +208,7 @@ export const codeAnalysisApi = {
       formData.append("threadId", threadId);
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/ai/review-files`, {
+    const response = await fetch(`${API_BASE_URL}/review-files`, {
       method: "POST",
       body: formData,
     });
@@ -248,7 +242,7 @@ export const codeAnalysisApi = {
         maxFileSize: string;
         maxFiles: number;
       }>
-    >("/api/ai/languages");
+    >("/languages");
     return response.data;
   },
 
@@ -265,18 +259,14 @@ export const codeAnalysisApi = {
         issueTypes: Record<string, string>;
         tips: string[];
       }>
-    >("/api/ai/guidelines");
+    >("/guidelines");
     return response.data;
   },
 };
 
-// Chat API (matches backend endpoints)
 export const chatApi = {
   async sendMessage(request: ChatRequest): Promise<ChatResponse> {
-    const response = await apiClient.post<ChatResponse>(
-      "/api/ai/chat",
-      request
-    );
+    const response = await apiClient.post<ChatResponse>("/chat", request);
     return response;
   },
 
@@ -292,7 +282,6 @@ export const chatApi = {
   },
 
   async deleteThread(threadId: string): Promise<void> {
-    // Backend doesn't have delete endpoint, so this is a no-op
     return Promise.resolve();
   },
 };
@@ -348,8 +337,8 @@ function transformCodeReviewToAnalysis(
           ? 5
           : 9,
       maintainability: data.codeQuality.maintainability,
-      testCoverage: 0, // Not provided by backend
-      performance: 5, // Default value as backend doesn't provide this
+      testCoverage: 0,
+      performance: 5,
     },
     security: {
       vulnerabilities: [
@@ -381,10 +370,8 @@ function transformCodeReviewToAnalysis(
   };
 }
 
-// Utility function for error handling
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError;
 }
 
-// Export the API client for custom requests
 export { apiClient };

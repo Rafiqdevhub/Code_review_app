@@ -36,7 +36,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-3">
@@ -57,9 +56,7 @@ const Index = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Input Section */}
           <div className="lg:col-span-1 space-y-6">
-            {/* File Upload Card */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <FileText className="h-5 w-5 text-blue-600" />
@@ -78,7 +75,6 @@ const Index = () => {
               )}
             </div>
 
-            {/* Manual Input Card */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <Code className="h-5 w-5 text-green-600" />
@@ -94,7 +90,6 @@ const Index = () => {
               />
             </div>
 
-            {/* Analyze Button */}
             {hasCode && (
               <button
                 onClick={handleAnalyze}
@@ -116,7 +111,6 @@ const Index = () => {
             )}
           </div>
 
-          {/* Middle Column - Code Display */}
           <div className="lg:col-span-1">
             <CodeAnalysis
               code={currentCode}
@@ -125,7 +119,6 @@ const Index = () => {
             />
           </div>
 
-          {/* Right Column - Best Practices */}
           <div className="lg:col-span-1">
             <BestPractices
               code={currentCode}

@@ -52,7 +52,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         className
       )}
     >
-      {/* Language indicator */}
       <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
         <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
           {language}
@@ -62,9 +61,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         </span>
       </div>
 
-      {/* Editor area */}
       <div className="relative">
-        {/* Line numbers */}
         <div className="absolute left-0 top-0 p-3 bg-gray-50 border-r border-gray-200 text-xs text-gray-500 font-mono select-none">
           {Array.from({ length: Math.max(lineCount, 1) }, (_, i) => (
             <div key={i} className="h-6 leading-6">
@@ -73,7 +70,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           ))}
         </div>
 
-        {/* Code input */}
         <textarea
           value={value}
           onChange={handleChange}
@@ -89,7 +85,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           spellCheck={false}
         />
 
-        {/* Placeholder hint when empty */}
         {!value && (
           <div className="absolute top-3 left-14 text-gray-400 text-sm font-mono pointer-events-none">
             {getLanguageHint(language)}
@@ -97,7 +92,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         )}
       </div>
 
-      {/* Footer with stats */}
       <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
         <span>
           {value.length} character{value.length !== 1 ? "s" : ""}
