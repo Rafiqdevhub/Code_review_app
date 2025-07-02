@@ -1,6 +1,6 @@
 import { AnalysisResults } from "@/components/ResultsDisplay";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export interface CodeIssue {
   type: "bug" | "warning" | "suggestion" | "security";
