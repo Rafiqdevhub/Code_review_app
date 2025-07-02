@@ -1,6 +1,6 @@
 import { AnalysisResults } from "@/components/ResultsDisplay";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = "https://codereviewbackend-sigma.vercel.app/api/ai";
 
 export interface CodeIssue {
   type: "bug" | "warning" | "suggestion" | "security";
