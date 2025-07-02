@@ -164,11 +164,37 @@ export const healthApi = {
     version: string;
     endpoints: string[];
   }> {
-    return apiClient.get<{
-      status: string;
-      version: string;
-      endpoints: string[];
-    }>("/");
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(API_BASE_URL, {
+        method: "HEAD",
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      return {
+        status: "online",
+        version: "1.0.0",
+        endpoints: ["/chat", "/analyze", "/analyze-files"],
+      };
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new ApiError({
+          message: "API health check timed out",
+          status: 408,
+          code: "TIMEOUT",
+        });
+      }
+
+      throw new ApiError({
+        message: "Backend API is not reachable",
+        status: 503,
+        code: "SERVICE_UNAVAILABLE",
+      });
+    }
   },
 
   async checkHealth(): Promise<{
@@ -182,7 +208,6 @@ export const healthApi = {
   },
 };
 
-// Code Analysis API (matches backend endpoints)
 export const codeAnalysisApi = {
   async analyzeText(request: CodeAnalysisRequest): Promise<AnalysisResults> {
     const response = await apiClient.post<BackendApiResponse<CodeReviewResult>>(
@@ -190,7 +215,6 @@ export const codeAnalysisApi = {
       request
     );
 
-    // Transform backend response to frontend format
     return transformCodeReviewToAnalysis(response.data);
   },
 
@@ -271,13 +295,10 @@ export const chatApi = {
   },
 
   async getChatHistory(threadId?: string): Promise<ChatMessage[]> {
-    // Note: Backend doesn't have history endpoint, so we'll manage history client-side
-    // This is a placeholder for future implementation
     return [];
   },
 
   async createThread(): Promise<{ threadId: string }> {
-    // Backend creates threadId automatically, so we'll generate one client-side
     return { threadId: crypto.randomUUID() };
   },
 
@@ -286,7 +307,6 @@ export const chatApi = {
   },
 };
 
-// Helper function to transform backend response to frontend format
 function transformCodeReviewToAnalysis(
   data: CodeReviewResult
 ): AnalysisResults {
@@ -298,7 +318,6 @@ function transformCodeReviewToAnalysis(
     (issue) => issue.severity === "high" || issue.severity === "critical"
   ).length;
 
-  // Calculate overall score based on issues and quality metrics
   const qualityScore = Math.round(
     (data.codeQuality.readability + data.codeQuality.maintainability) / 2
   );
