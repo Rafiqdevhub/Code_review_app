@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { chatApi, isApiError } from "@/services/api";
+import { chatApi, isApiError, isRateLimitError } from "@/services/api";
 import { toast } from "@/hooks/use-toast";
 import {
   Send,
@@ -15,6 +15,10 @@ import {
   ThumbsDown,
   RotateCcw,
   Trash2,
+  AlertTriangle,
+  Mail,
+  Clock,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +31,16 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -116,16 +130,16 @@ const formatMessageContent = (content: string) => {
       inList = false;
     }
 
-    // Check for headings
+    // Check for headings - treat them as regular text for natural conversation
     if (trimmedLine.startsWith("##")) {
       const headingText = trimmedLine.replace(/^##\s*/, "");
       elements.push(
-        <h3
+        <p
           key={elements.length}
-          className="text-lg font-semibold mt-4 mb-2 text-gray-900"
+          className="mb-2 text-sm leading-relaxed font-medium text-gray-900"
         >
           {headingText}
-        </h3>
+        </p>
       );
       return;
     }
@@ -133,12 +147,12 @@ const formatMessageContent = (content: string) => {
     if (trimmedLine.startsWith("#")) {
       const headingText = trimmedLine.replace(/^#\s*/, "");
       elements.push(
-        <h2
+        <p
           key={elements.length}
-          className="text-xl font-bold mt-4 mb-2 text-gray-900"
+          className="mb-2 text-sm leading-relaxed font-medium text-gray-900"
         >
           {headingText}
-        </h2>
+        </p>
       );
       return;
     }
@@ -229,6 +243,21 @@ const AiChat = () => {
   const [activeThreadId, setActiveThreadId] = useState<string>("1");
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+
+  // Error handling state
+  const [errorDialog, setErrorDialog] = useState<{
+    isOpen: boolean;
+    type: "rate_limit" | "network" | "server" | "unknown";
+    title: string;
+    message: string;
+    details?: string;
+  }>({
+    isOpen: false,
+    type: "unknown",
+    title: "",
+    message: "",
+  });
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -374,40 +403,123 @@ const AiChat = () => {
       setIsTyping(false);
     } catch (error) {
       console.error("Failed to send message:", error);
-
-      let errorMessage = "Failed to send message. Please try again.";
-      if (isApiError(error)) {
-        errorMessage = error.message;
-      }
-
-      toast({
-        title: "Message Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-
-      // Add error message to chat
-      const errorAssistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: "assistant",
-        content:
-          "Sorry, I'm having trouble responding right now. Please try again later.",
-        timestamp: new Date(),
-      };
-
-      setThreads((prev) =>
-        prev.map((thread) =>
-          thread.id === activeThreadId
-            ? {
-                ...thread,
-                messages: [...thread.messages, errorAssistantMessage],
-                lastUpdated: new Date(),
-              }
-            : thread
-        )
-      );
-
       setIsTyping(false);
+
+      // Handle different types of errors
+      if (isRateLimitError(error)) {
+        // Show modal for rate limit errors
+        setErrorDialog({
+          isOpen: true,
+          type: "rate_limit",
+          title: "Daily Limit Reached",
+          message: "You have reached your daily limit for AI requests.",
+          details:
+            "If you need more requests, please contact us at: rafkhan9323@gmail.com",
+        });
+
+        // Also add rate limit message to chat
+        const rateLimitMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          type: "assistant",
+          content:
+            "You have reached the daily limit for AI requests. If you need more requests, please contact us at: rafkhan9323@gmail.com",
+          timestamp: new Date(),
+        };
+
+        setThreads((prev) =>
+          prev.map((thread) =>
+            thread.id === activeThreadId
+              ? {
+                  ...thread,
+                  messages: [...thread.messages, rateLimitMessage],
+                  lastUpdated: new Date(),
+                }
+              : thread
+          )
+        );
+      } else if (isApiError(error)) {
+        // Determine error type based on status code
+        let errorType: "network" | "server" | "unknown" = "unknown";
+        let title = "Error";
+        let message = "An error occurred while sending your message.";
+
+        if (error.status === 503 || error.code === "SERVICE_UNAVAILABLE") {
+          errorType = "server";
+          title = "Service Unavailable";
+          message =
+            "The AI service is currently unavailable. Please try again later.";
+        } else if (error.status === 408 || error.code === "TIMEOUT") {
+          errorType = "network";
+          title = "Connection Timeout";
+          message =
+            "The request timed out. Please check your connection and try again.";
+        } else if (error.status && error.status >= 500) {
+          errorType = "server";
+          title = "Server Error";
+          message = "A server error occurred. Please try again later.";
+        } else if (!error.status) {
+          errorType = "network";
+          title = "Network Error";
+          message =
+            "Unable to connect to the service. Please check your internet connection.";
+        }
+
+        // For non-rate-limit errors, show a toast and add error message to chat
+        toast({
+          title: title,
+          description: error.message || message,
+          variant: "destructive",
+          duration: 5000,
+        });
+
+        const errorAssistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          type: "assistant",
+          content:
+            "Sorry, I'm having trouble responding right now. Please try again later.",
+          timestamp: new Date(),
+        };
+
+        setThreads((prev) =>
+          prev.map((thread) =>
+            thread.id === activeThreadId
+              ? {
+                  ...thread,
+                  messages: [...thread.messages, errorAssistantMessage],
+                  lastUpdated: new Date(),
+                }
+              : thread
+          )
+        );
+      } else {
+        // Unknown error
+        toast({
+          title: "Message Failed",
+          description: "Failed to send message. Please try again.",
+          variant: "destructive",
+          duration: 5000,
+        });
+
+        const errorAssistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          type: "assistant",
+          content:
+            "Sorry, I'm having trouble responding right now. Please try again later.",
+          timestamp: new Date(),
+        };
+
+        setThreads((prev) =>
+          prev.map((thread) =>
+            thread.id === activeThreadId
+              ? {
+                  ...thread,
+                  messages: [...thread.messages, errorAssistantMessage],
+                  lastUpdated: new Date(),
+                }
+              : thread
+          )
+        );
+      }
     }
   };
 
@@ -694,6 +806,131 @@ const AiChat = () => {
           </div>
         </div>
       </div>
+
+      {/* Error Dialog Modal */}
+      <AlertDialog
+        open={errorDialog.isOpen}
+        onOpenChange={(open) =>
+          setErrorDialog((prev) => ({ ...prev, isOpen: open }))
+        }
+      >
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center space-x-2">
+              {errorDialog.type === "rate_limit" && (
+                <div className="p-2 bg-orange-100 rounded-full">
+                  <Clock className="h-5 w-5 text-orange-600" />
+                </div>
+              )}
+              {errorDialog.type === "network" && (
+                <div className="p-2 bg-red-100 rounded-full">
+                  <RefreshCw className="h-5 w-5 text-red-600" />
+                </div>
+              )}
+              {(errorDialog.type === "server" ||
+                errorDialog.type === "unknown") && (
+                <div className="p-2 bg-red-100 rounded-full">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                </div>
+              )}
+              <AlertDialogTitle className="text-lg font-semibold">
+                {errorDialog.title}
+              </AlertDialogTitle>
+            </div>
+          </AlertDialogHeader>
+
+          <AlertDialogDescription className="text-sm text-gray-600 space-y-3">
+            <p>{errorDialog.message}</p>
+
+            {errorDialog.details && (
+              <div className="bg-gray-50 p-3 rounded-md border-l-4 border-orange-400">
+                <p className="text-sm font-medium text-gray-800 mb-1">
+                  Contact Information:
+                </p>
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">
+                    {errorDialog.details}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {errorDialog.type === "rate_limit" && (
+              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-blue-800 mb-1">
+                  What can you do?
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>
+                    • Wait for the daily limit to reset (resets at midnight UTC)
+                  </li>
+                  <li>
+                    • Contact us for increased limits if you're a regular user
+                  </li>
+                  <li>
+                    • Use the code review feature which has separate limits
+                  </li>
+                </ul>
+              </div>
+            )}
+
+            {errorDialog.type === "network" && (
+              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-blue-800 mb-1">
+                  Troubleshooting:
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Check your internet connection</li>
+                  <li>• Try refreshing the page</li>
+                  <li>• Wait a moment and try again</li>
+                </ul>
+              </div>
+            )}
+
+            {(errorDialog.type === "server" ||
+              errorDialog.type === "unknown") && (
+              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-blue-800 mb-1">
+                  What to try:
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Wait a few minutes and try again</li>
+                  <li>• Refresh the page</li>
+                  <li>• If the problem persists, contact support</li>
+                </ul>
+              </div>
+            )}
+          </AlertDialogDescription>
+
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            {errorDialog.type === "rate_limit" && errorDialog.details && (
+              <AlertDialogAction
+                onClick={() => {
+                  window.open(
+                    `mailto:${errorDialog.details?.replace(
+                      "If you need more requests, please contact us at: ",
+                      ""
+                    )}?subject=Request for Increased AI Chat Limits&body=Hello, I would like to request increased daily limits for the AI chat feature. Thank you!`,
+                    "_blank"
+                  );
+                }}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Contact Support
+              </AlertDialogAction>
+            )}
+            <AlertDialogCancel
+              onClick={() =>
+                setErrorDialog((prev) => ({ ...prev, isOpen: false }))
+              }
+            >
+              Close
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

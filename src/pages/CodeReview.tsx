@@ -4,9 +4,20 @@ import { CodeAnalysis } from "@/components/CodeAnalysis";
 import { BestPractices } from "@/components/BestPractices";
 import { CodeEditor } from "@/components/CodeEditor";
 import { ResultsDisplay, AnalysisResults } from "@/components/ResultsDisplay";
-import { codeAnalysisApi, isApiError } from "@/services/api";
+import { codeAnalysisApi, isApiError, isRateLimitError } from "@/services/api";
 import { toast } from "@/hooks/use-toast";
-import { Code, Settings, Play, ArrowLeft, Save, Share } from "lucide-react";
+import {
+  Code,
+  Settings,
+  Play,
+  ArrowLeft,
+  Save,
+  Share,
+  AlertTriangle,
+  Mail,
+  Clock,
+  RefreshCw,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +29,16 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const CodeReview = () => {
   const [codeFiles, setCodeFiles] = useState<CodeFile[]>([]);
@@ -28,6 +49,20 @@ const CodeReview = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] =
     useState<AnalysisResults | null>(null);
+
+  // Error handling state
+  const [errorDialog, setErrorDialog] = useState<{
+    isOpen: boolean;
+    type: "rate_limit" | "network" | "server" | "unknown";
+    title: string;
+    message: string;
+    details?: string;
+  }>({
+    isOpen: false,
+    type: "unknown",
+    title: "",
+    message: "",
+  });
 
   const handleFileUpload = (files: CodeFile[]) => {
     setCodeFiles(files);
@@ -89,16 +124,62 @@ const CodeReview = () => {
     } catch (error) {
       console.error("Analysis failed:", error);
 
-      let errorMessage = "Failed to analyze code. Please try again.";
-      if (isApiError(error)) {
-        errorMessage = error.message;
-      }
+      // Handle different types of errors
+      if (isRateLimitError(error)) {
+        // Show modal for rate limit errors
+        setErrorDialog({
+          isOpen: true,
+          type: "rate_limit",
+          title: "Daily Limit Reached",
+          message:
+            "You have reached your daily limit for code analysis requests.",
+          details:
+            "If you need more requests, please contact us at: rafkhan9323@gmail.com",
+        });
+      } else if (isApiError(error)) {
+        // Determine error type based on status code
+        let errorType: "network" | "server" | "unknown" = "unknown";
+        let title = "Analysis Failed";
+        let message = "An error occurred while analyzing your code.";
 
-      toast({
-        title: "Analysis Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
+        if (error.status === 503 || error.code === "SERVICE_UNAVAILABLE") {
+          errorType = "server";
+          title = "Service Unavailable";
+          message =
+            "The code analysis service is currently unavailable. Please try again later.";
+        } else if (error.status === 408 || error.code === "TIMEOUT") {
+          errorType = "network";
+          title = "Connection Timeout";
+          message =
+            "The analysis request timed out. Please check your connection and try again.";
+        } else if (error.status && error.status >= 500) {
+          errorType = "server";
+          title = "Server Error";
+          message =
+            "A server error occurred during analysis. Please try again later.";
+        } else if (!error.status) {
+          errorType = "network";
+          title = "Network Error";
+          message =
+            "Unable to connect to the analysis service. Please check your internet connection.";
+        }
+
+        // For non-rate-limit errors, show a toast
+        toast({
+          title: title,
+          description: error.message || message,
+          variant: "destructive",
+          duration: 5000,
+        });
+      } else {
+        // Unknown error
+        toast({
+          title: "Analysis Failed",
+          description: "Failed to analyze code. Please try again.",
+          variant: "destructive",
+          duration: 5000,
+        });
+      }
     } finally {
       setIsAnalyzing(false);
     }
@@ -345,6 +426,130 @@ const CodeReview = () => {
           </div>
         </div>
       </div>
+
+      {/* Error Dialog Modal */}
+      <AlertDialog
+        open={errorDialog.isOpen}
+        onOpenChange={(open) =>
+          setErrorDialog((prev) => ({ ...prev, isOpen: open }))
+        }
+      >
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center space-x-2">
+              {errorDialog.type === "rate_limit" && (
+                <div className="p-2 bg-orange-100 rounded-full">
+                  <Clock className="h-5 w-5 text-orange-600" />
+                </div>
+              )}
+              {errorDialog.type === "network" && (
+                <div className="p-2 bg-red-100 rounded-full">
+                  <RefreshCw className="h-5 w-5 text-red-600" />
+                </div>
+              )}
+              {(errorDialog.type === "server" ||
+                errorDialog.type === "unknown") && (
+                <div className="p-2 bg-red-100 rounded-full">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                </div>
+              )}
+              <AlertDialogTitle className="text-lg font-semibold">
+                {errorDialog.title}
+              </AlertDialogTitle>
+            </div>
+          </AlertDialogHeader>
+
+          <AlertDialogDescription className="text-sm text-gray-600 space-y-3">
+            <p>{errorDialog.message}</p>
+
+            {errorDialog.details && (
+              <div className="bg-gray-50 p-3 rounded-md border-l-4 border-orange-400">
+                <p className="text-sm font-medium text-gray-800 mb-1">
+                  Contact Information:
+                </p>
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">
+                    {errorDialog.details}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {errorDialog.type === "rate_limit" && (
+              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-blue-800 mb-1">
+                  What can you do?
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>
+                    • Wait for the daily limit to reset (resets at midnight UTC)
+                  </li>
+                  <li>
+                    • Contact us for increased limits if you're a regular user
+                  </li>
+                  <li>• Try the AI chat feature which has separate limits</li>
+                </ul>
+              </div>
+            )}
+
+            {errorDialog.type === "network" && (
+              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-blue-800 mb-1">
+                  Troubleshooting:
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Check your internet connection</li>
+                  <li>• Try refreshing the page</li>
+                  <li>• Make sure your files aren't too large</li>
+                </ul>
+              </div>
+            )}
+
+            {(errorDialog.type === "server" ||
+              errorDialog.type === "unknown") && (
+              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-blue-800 mb-1">
+                  What to try:
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Wait a few minutes and try again</li>
+                  <li>• Refresh the page</li>
+                  <li>• Try with smaller code files</li>
+                  <li>• If the problem persists, contact support</li>
+                </ul>
+              </div>
+            )}
+          </AlertDialogDescription>
+
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            {errorDialog.type === "rate_limit" && errorDialog.details && (
+              <AlertDialogAction
+                onClick={() => {
+                  window.open(
+                    `mailto:${errorDialog.details?.replace(
+                      "If you need more requests, please contact us at: ",
+                      ""
+                    )}?subject=Request for Increased Code Analysis Limits&body=Hello, I would like to request increased daily limits for the code analysis feature. Thank you!`,
+                    "_blank"
+                  );
+                }}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Contact Support
+              </AlertDialogAction>
+            )}
+            <AlertDialogCancel
+              onClick={() =>
+                setErrorDialog((prev) => ({ ...prev, isOpen: false }))
+              }
+            >
+              Close
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

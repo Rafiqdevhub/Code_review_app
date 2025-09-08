@@ -1,6 +1,7 @@
 import { AnalysisResults } from "@/components/ResultsDisplay";
 
 const API_BASE_URL = "https://codereviewbackend-sigma.vercel.app/api/ai";
+// const API_BASE_URL = "http://localhost:5000/api/ai";
 
 export interface CodeIssue {
   type: "bug" | "warning" | "suggestion" | "security";
@@ -98,6 +99,17 @@ class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+
+        // Check for rate limit errors
+        if (response.status === 429) {
+          throw new ApiError({
+            message:
+              "You have reached the daily limit. If you want more requests, contact us at: rafkhan9323@gmail.com",
+            status: response.status,
+            code: "RATE_LIMIT_EXCEEDED",
+          });
+        }
+
         throw new ApiError({
           message:
             errorData.message ||
@@ -239,6 +251,17 @@ export const codeAnalysisApi = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+
+      // Check for rate limit errors
+      if (response.status === 429) {
+        throw new ApiError({
+          message:
+            "You have reached the daily limit. If you want more requests, contact us at: rafkhan9323@gmail.com",
+          status: response.status,
+          code: "RATE_LIMIT_EXCEEDED",
+        });
+      }
+
       throw new ApiError({
         message:
           errorData.message ||
@@ -391,6 +414,10 @@ function transformCodeReviewToAnalysis(
 
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError;
+}
+
+export function isRateLimitError(error: unknown): error is ApiError {
+  return error instanceof ApiError && error.code === "RATE_LIMIT_EXCEEDED";
 }
 
 export { apiClient };
