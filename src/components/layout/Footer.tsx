@@ -1,7 +1,6 @@
 import {
   Code,
   Github,
-  Twitter,
   Mail,
   MessageSquare,
   FileText,
