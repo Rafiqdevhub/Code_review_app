@@ -29,7 +29,6 @@ const App = () => (
           <DevelopmentBanner />
           <BrowserRouter>
             <Routes>
-              {/* Public routes that redirect authenticated users */}
               <Route
                 path="/login"
                 element={
@@ -46,14 +45,10 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-
-              {/* Main app routes - accessible to guests until rate limited */}
               <Route path="/" element={<Home />} />
               <Route path="/old" element={<Index />} />
               <Route path="/review" element={<CodeReview />} />
               <Route path="/chat" element={<AiChat />} />
-
-              {/* Authentication-only routes */}
               <Route
                 path="/profile"
                 element={
@@ -70,8 +65,6 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-
-              {/* 404 route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
