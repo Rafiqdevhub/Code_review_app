@@ -142,10 +142,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     } catch (error) {
       dispatch({ type: "AUTH_FAILURE" });
       if (isApiError(error)) {
+        console.error("🔍 [REGISTER] API Error details:", {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+        });
         if (error.status === 409) {
           toast.error("User with this email already exists");
         } else if (error.status === 429) {
           toast.error("Rate limit exceeded. Please try again later.");
+        } else if (error.status === 500) {
+          toast.error("Server error. Please check backend logs.");
         } else {
           toast.error(error.message);
         }

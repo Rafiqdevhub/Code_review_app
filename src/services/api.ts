@@ -10,6 +10,108 @@ import type {
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const isDevelopment = import.meta.env.DEV;
+const isMockMode = import.meta.env.VITE_MOCK_API === "true";
+
+// Mock response functions for development testing
+const mockResponses: Record<string, { success: boolean; data: unknown }> = {
+  "/api/ai/chat": {
+    success: true,
+    data: {
+      message:
+        "This is a mock response for development testing. The backend is not available, but you can continue testing the UI.",
+      threadId: "mock-thread-123",
+    },
+  },
+  "/api/ai/review-text": {
+    success: true,
+    data: {
+      summary: "Mock code analysis completed successfully",
+      issues: [
+        {
+          type: "suggestion",
+          severity: "low",
+          description:
+            "Consider using const instead of let for variables that don't change",
+          suggestion: "Replace 'let' with 'const' where appropriate",
+        },
+      ],
+      suggestions: [
+        "Add error handling",
+        "Consider using TypeScript interfaces",
+      ],
+      securityConcerns: [],
+      codeQuality: {
+        readability: 8,
+        maintainability: 7,
+        complexity: "Low",
+      },
+      threadId: "mock-analysis-123",
+      filesAnalyzed: [
+        {
+          filename: "example.js",
+          language: "javascript",
+          size: 1024,
+        },
+      ],
+    },
+  },
+  "/api/ai/review-files": {
+    success: true,
+    data: {
+      summary: "Mock file analysis completed successfully",
+      issues: [],
+      suggestions: ["Files analyzed successfully in mock mode"],
+      securityConcerns: [],
+      codeQuality: {
+        readability: 9,
+        maintainability: 8,
+        complexity: "Low",
+      },
+      threadId: "mock-files-123",
+      filesAnalyzed: [
+        {
+          filename: "test.js",
+          language: "javascript",
+          size: 2048,
+        },
+      ],
+    },
+  },
+  "/api/ai/languages": {
+    success: true,
+    data: [
+      "javascript",
+      "typescript",
+      "python",
+      "java",
+      "csharp",
+      "cpp",
+      "go",
+      "rust",
+      "php",
+      "ruby",
+    ],
+  },
+  "/api/ai/guidelines": {
+    success: true,
+    data: {
+      guidelines: [
+        "Use meaningful variable names",
+        "Add proper error handling",
+        "Write comprehensive tests",
+        "Follow consistent code formatting",
+        "Document complex logic",
+      ],
+    },
+  },
+};
+
+function getMockResponse<T>(endpoint: string): T | null {
+  // Remove query parameters for matching
+  const baseEndpoint = endpoint.split("?")[0];
+  const mockData = mockResponses[baseEndpoint];
+  return mockData ? (mockData as T) : null;
+}
 
 export interface CodeIssue {
   type: "bug" | "warning" | "suggestion" | "security";
@@ -97,6 +199,24 @@ function createApiClient(baseUrl: string) {
     };
 
     try {
+      // Check if we should use mock responses
+      if (isMockMode) {
+        console.log(`🚀 [MOCK] Using mock response for ${endpoint}`);
+        const mockResponse = getMockResponse(endpoint);
+        if (mockResponse) {
+          // Add a small delay to simulate network request
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          // For chat endpoint, return data directly (not wrapped)
+          if (endpoint === "/api/ai/chat") {
+            return (mockResponse as { success: boolean; data: T }).data;
+          }
+
+          // For other endpoints, return the full response structure
+          return mockResponse as T;
+        }
+      }
+
       const response = await fetch(url, config);
 
       if (!response.ok) {
@@ -189,7 +309,17 @@ export const healthApi = {
       return {
         status: "online",
         version: "1.0.0",
-        endpoints: ["/chat", "/analyze", "/analyze-files"],
+        endpoints: [
+          "/api/auth/register",
+          "/api/auth/login",
+          "/api/auth/profile",
+          "/api/auth/logout",
+          "/api/ai/chat",
+          "/api/ai/review-text",
+          "/api/ai/review-files",
+          "/api/ai/languages",
+          "/api/ai/guidelines",
+        ],
       };
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
@@ -222,7 +352,7 @@ export const healthApi = {
 export const codeAnalysisApi = {
   async analyzeText(request: CodeAnalysisRequest): Promise<AnalysisResults> {
     const response = await apiClient.post<BackendApiResponse<CodeReviewResult>>(
-      "/review-text",
+      "/api/ai/review-text",
       request
     );
 
@@ -243,7 +373,7 @@ export const codeAnalysisApi = {
       formData.append("threadId", threadId);
     }
 
-    const response = await fetch(`${API_BASE_URL}/review-files`, {
+    const response = await fetch(`${API_BASE_URL}/api/ai/review-files`, {
       method: "POST",
       body: formData,
     });
@@ -288,7 +418,7 @@ export const codeAnalysisApi = {
         maxFileSize: string;
         maxFiles: number;
       }>
-    >("/languages");
+    >("/api/ai/languages");
     return response.data;
   },
 
@@ -305,14 +435,17 @@ export const codeAnalysisApi = {
         issueTypes: Record<string, string>;
         tips: string[];
       }>
-    >("/guidelines");
+    >("/api/ai/guidelines");
     return response.data;
   },
 };
 
 export const chatApi = {
   async sendMessage(request: ChatRequest): Promise<ChatResponse> {
-    const response = await apiClient.post<ChatResponse>("/chat", request);
+    const response = await apiClient.post<ChatResponse>(
+      "/api/ai/chat",
+      request
+    );
     return response;
   },
 
@@ -463,11 +596,21 @@ export const authApi = {
   },
 
   async register(userData: RegisterRequest): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>(
-      "/api/auth/register",
-      userData
-    );
-    return response;
+    console.log("🌐 [API] Register request:", {
+      url: `${API_BASE_URL}/api/auth/register`,
+      data: userData,
+    });
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        "/api/auth/register",
+        userData
+      );
+      console.log("✅ [API] Register response:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ [API] Register error:", error);
+      throw error;
+    }
   },
 
   async getProfile(): Promise<ProfileResponse> {

@@ -1,23 +1,14 @@
-/**
- * Environment Configuration
- * Centralized configuration for development vs production environments
- */
-
 export const ENV = {
-  // Environment detection
   isDevelopment: import.meta.env.DEV,
   isProduction: import.meta.env.PROD,
 
-  // API Configuration
   api: {
     baseUrl: import.meta.env.VITE_BACKEND_URL || "http://localhost:5000",
     timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 30000,
     debug: import.meta.env.VITE_API_DEBUG === "true",
   },
 
-  // Rate Limiting Configuration
   rateLimit: {
-    // Development: Unlimited requests
     development: {
       guest: {
         requests: 999999,
@@ -28,7 +19,6 @@ export const ENV = {
         message: "Development Mode - Unlimited Requests",
       },
     },
-    // Production: Real limits
     production: {
       guest: {
         requests: 10,
@@ -49,7 +39,6 @@ export const ENV = {
   },
 } as const;
 
-// Helper functions
 export const getRateLimitConfig = (isAuthenticated: boolean) => {
   const config = ENV.isDevelopment
     ? ENV.rateLimit.development

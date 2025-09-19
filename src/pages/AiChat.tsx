@@ -51,6 +51,15 @@ import { useRateLimit } from "@/hooks/useRateLimit";
 import { useAuth } from "@/hooks/useAuth";
 
 const formatMessageContent = (content: string) => {
+  // Handle undefined or null content
+  if (!content) {
+    return [
+      <span key="empty" className="text-gray-500 italic">
+        No content available
+      </span>,
+    ];
+  }
+
   const lines = content.split("\n");
   const elements: React.ReactNode[] = [];
   let currentCodeBlock: string[] = [];
@@ -239,7 +248,6 @@ const AiChat = () => {
 
     // Skip rate limit redirection in development mode
     if (isDevelopment) {
-      console.log("🚀 Development Mode: Skipping rate limit redirection");
       return;
     }
 
@@ -416,7 +424,9 @@ const AiChat = () => {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "assistant",
-        content: response.message,
+        content:
+          response?.message ||
+          "Sorry, I couldn't generate a response. Please try again.",
         timestamp: new Date(),
       };
 
@@ -427,7 +437,8 @@ const AiChat = () => {
                 ...thread,
                 messages: [...thread.messages, assistantMessage],
                 lastUpdated: new Date(),
-                backendThreadId: response.threadId, // Store backend thread ID
+                backendThreadId:
+                  response?.threadId || activeThread.backendThreadId, // Store backend thread ID
               }
             : thread
         )
