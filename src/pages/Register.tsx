@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, UserPlus, Mail, Lock, User } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Mail, Lock, User, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -190,6 +190,16 @@ const Register: React.FC = () => {
               <strong>Benefits of registration:</strong> Get 100 requests per
               day instead of 10 for guests!
             </p>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center w-full px-4 py-2 bg-gray-100 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-200 hover:border-gray-400 transition-colors duration-200"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Go back to home
+            </Link>
           </div>
         </CardContent>
       </Card>

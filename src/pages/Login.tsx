@@ -3,7 +3,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Eye, EyeOff, LogIn, Mail, Lock, AlertTriangle } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  LogIn,
+  Mail,
+  Lock,
+  AlertTriangle,
+  Home,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -150,6 +158,16 @@ const Login: React.FC = () => {
               <strong>Rate Limiting:</strong> Guests have 10 requests per day.
               Register for higher limits!
             </p>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center w-full px-4 py-2 bg-gray-100 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-200 hover:border-gray-400 transition-colors duration-200"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Go back to home
+            </Link>
           </div>
         </CardContent>
       </Card>
