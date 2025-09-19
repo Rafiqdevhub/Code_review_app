@@ -6,172 +6,254 @@ import {
   FileText,
   Shield,
   Zap,
+  ArrowUp,
+  ExternalLink,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="bg-gray-900 text-white border-t border-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-blue-600 rounded-lg">
-                <Code className="h-6 w-6 text-white" />
+    <footer className="relative bg-slate-900 text-white overflow-hidden">
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:24px_24px]" />
+      </div>
+
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
+            <div className="sm:col-span-2 lg:col-span-1 space-y-4 sm:space-y-6">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="relative group">
+                  <div className="p-2 sm:p-3 bg-blue-600 rounded-lg sm:rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300">
+                    <Code className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white">
+                    Codify
+                  </h3>
+                  <p className="text-xs sm:text-sm text-blue-400 font-medium">
+                    AI-Powered Platform
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold">Code Review Agent</h3>
+
+              <p className="text-gray-300 text-sm leading-relaxed max-w-xs">
+                Empowering developers with AI-driven code analysis and
+                improvement suggestions. Write better, safer, and more
+                maintainable code.
+              </p>
+
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <a
+                  href="https://github.com/Rafiqdevhub"
+                  className="group p-2 sm:p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-all duration-300 hover:scale-105"
+                  aria-label="GitHub"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-white transition-colors" />
+                </a>
+
+                <a
+                  href="mailto:rafkhan9323@gmail.com"
+                  className="group p-2 sm:p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-all duration-300 hover:scale-105"
+                  aria-label="Email"
+                >
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-white transition-colors" />
+                </a>
+
+                <button
+                  onClick={scrollToTop}
+                  className="group p-2 sm:p-3 bg-blue-600 hover:bg-blue-500 rounded-lg transition-all duration-300 hover:scale-105"
+                  aria-label="Back to top"
+                >
+                  <ArrowUp className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                </button>
+              </div>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-4">
-              Empowering developers with AI-driven code analysis and improvement
-              suggestions. Write better, safer, and more maintainable code.
-            </p>
-            <div className="flex space-x-4">
-              <a
-                href="https://github.com/Rafiqdevhub"
-                className="text-gray-400 hover:text-white transition-colors duration-200"
-                aria-label="GitHub"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Github className="h-5 w-5" />
-              </a>
 
-              <a
-                href="mailto:rafkhan9323@gmail.com"
-                className="text-gray-400 hover:text-white transition-colors duration-200"
-                aria-label="Email"
-              >
-                <Mail className="h-5 w-5" />
-              </a>
+            <div className="space-y-4 sm:space-y-6">
+              <div>
+                <h4 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6 relative">
+                  Features
+                  <div className="absolute -bottom-2 left-0 w-6 sm:w-8 h-0.5 bg-blue-500"></div>
+                </h4>
+                <ul className="space-y-3 sm:space-y-4">
+                  <li>
+                    <Link
+                      to="/review"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <div className="p-1 bg-slate-800 group-hover:bg-blue-600 rounded-md mr-2 sm:mr-3 transition-colors duration-300">
+                        <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </div>
+                      <span className="flex-1">Code Analysis</span>
+                      <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/chat"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <div className="p-1 bg-slate-800 group-hover:bg-blue-600 rounded-md mr-2 sm:mr-3 transition-colors duration-300">
+                        <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </div>
+                      <span className="flex-1">AI Chat</span>
+                      <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <div className="p-1 bg-slate-800 group-hover:bg-blue-600 rounded-md mr-2 sm:mr-3 transition-colors duration-300">
+                        <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </div>
+                      <span className="flex-1">Security Scan</span>
+                      <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <div className="p-1 bg-slate-800 group-hover:bg-blue-600 rounded-md mr-2 sm:mr-3 transition-colors duration-300">
+                        <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </div>
+                      <span className="flex-1">Performance</span>
+                      <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Features</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/review"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm flex items-center"
-                >
-                  <FileText className="h-4 w-4 mr-2" />
-                  Code Analysis
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/chat"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm flex items-center"
-                >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  AI Chat
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm flex items-center"
-                >
-                  <Shield className="h-4 w-4 mr-2" />
-                  Security Scan
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm flex items-center"
-                >
-                  <Zap className="h-4 w-4 mr-2" />
-                  Performance
-                </a>
-              </li>
-            </ul>
-          </div>
+            <div className="space-y-4 sm:space-y-6">
+              <div>
+                <h4 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6 relative">
+                  Resources
+                  <div className="absolute -bottom-2 left-0 w-6 sm:w-8 h-0.5 bg-blue-500"></div>
+                </h4>
+                <ul className="space-y-2 sm:space-y-3">
+                  <li>
+                    <a
+                      href="#"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <span className="w-2 h-2 bg-slate-600 group-hover:bg-blue-500 rounded-full mr-2 sm:mr-3 transition-colors"></span>
+                      <span className="flex-1">Documentation</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <span className="w-2 h-2 bg-slate-600 group-hover:bg-blue-500 rounded-full mr-2 sm:mr-3 transition-colors"></span>
+                      <span className="flex-1">API Reference</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <span className="w-2 h-2 bg-slate-600 group-hover:bg-blue-500 rounded-full mr-2 sm:mr-3 transition-colors"></span>
+                      <span className="flex-1">Best Practices</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="group flex items-center text-gray-300 hover:text-white transition-all duration-300 text-sm hover:translate-x-1"
+                    >
+                      <span className="w-2 h-2 bg-slate-600 group-hover:bg-blue-500 rounded-full mr-2 sm:mr-3 transition-colors"></span>
+                      <span className="flex-1">Support</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
-                >
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
-                >
-                  API Reference
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
-                >
-                  Best Practices
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
-                >
-                  Support
-                </a>
-              </li>
-            </ul>
-          </div>
+            <div className="sm:col-span-2 lg:col-span-1 space-y-4 sm:space-y-6">
+              <div>
+                <h4 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6 relative">
+                  Stay Connected
+                  <div className="absolute -bottom-2 left-0 w-6 sm:w-8 h-0.5 bg-blue-500"></div>
+                </h4>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Contact</h4>
-            <div className="space-y-2 text-sm text-gray-400">
-              <p>Have questions about our AI-powered code analysis?</p>
-              <a
-                href="mailto:support@codereviewagent.com"
-                className="text-blue-400 hover:text-blue-300 transition-colors duration-200 block"
-              >
-                rafkhan9323@gmail.com
-              </a>
-              <div className="pt-4 border-t border-gray-800">
-                <p className="text-xs">
-                  © {currentYear} Code Review Agent. All rights reserved.
-                </p>
+                <div className="space-y-3 sm:space-y-4">
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    Get the latest updates on AI-powered code analysis and
+                    developer tools.
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="flex flex-col sm:flex-row">
+                      <input
+                        type="email"
+                        placeholder="Enter your email"
+                        className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg sm:rounded-l-lg sm:rounded-r-none text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2 sm:mb-0"
+                      />
+                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg sm:rounded-l-none sm:rounded-r-lg transition-colors duration-300 whitespace-nowrap">
+                        Subscribe
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      No spam, unsubscribe anytime.
+                    </p>
+                  </div>
+
+                  <div className="pt-3 sm:pt-4 border-t border-slate-700">
+                    <p className="text-gray-300 text-sm mb-2">
+                      Questions about our platform?
+                    </p>
+                    <a
+                      href="mailto:rafkhan9323@gmail.com"
+                      className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors duration-300 text-sm font-medium"
+                    >
+                      <Mail className="h-4 w-4 mr-2" />
+                      <span className="break-all">rafkhan9323@gmail.com</span>
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-400">
-            <div className="flex space-x-6 mb-2 sm:mb-0">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-700">
+          <div className="flex flex-col space-y-4 sm:space-y-6">
+            <div className="flex flex-wrap justify-center space-x-4 sm:space-x-6 text-sm">
               <a
                 href="#"
-                className="hover:text-white transition-colors duration-200"
+                className="text-gray-400 hover:text-white transition-colors duration-300 mb-2 sm:mb-0"
               >
                 Privacy Policy
               </a>
               <a
                 href="#"
-                className="hover:text-white transition-colors duration-200"
+                className="text-gray-400 hover:text-white transition-colors duration-300 mb-2 sm:mb-0"
               >
                 Terms of Service
               </a>
               <a
                 href="#"
-                className="hover:text-white transition-colors duration-200"
+                className="text-gray-400 hover:text-white transition-colors duration-300 mb-2 sm:mb-0"
               >
                 Cookie Policy
               </a>
             </div>
-            <div className="text-xs">Made with ❤️ for developers worldwide</div>
           </div>
         </div>
       </div>
