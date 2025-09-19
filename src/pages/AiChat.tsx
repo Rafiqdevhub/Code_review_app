@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { chatApi, isApiError, isRateLimitError } from "@/services/api";
 import { toast } from "@/hooks/use-toast";
 import {
@@ -47,6 +47,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { useAuth } from "@/hooks/useAuth";
 
 const formatMessageContent = (content: string) => {
   const lines = content.split("\n");
@@ -222,6 +224,37 @@ interface ChatThread {
 }
 
 const AiChat = () => {
+  const { rateLimitStatus, checkRateLimit } = useRateLimit();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  // Check rate limits when component mounts
+  useEffect(() => {
+    checkRateLimit();
+  }, [checkRateLimit]);
+
+  // Handle rate limit redirection for guests
+  useEffect(() => {
+    const isDevelopment = import.meta.env.DEV;
+
+    // Skip rate limit redirection in development mode
+    if (isDevelopment) {
+      console.log("🚀 Development Mode: Skipping rate limit redirection");
+      return;
+    }
+
+    if (!isAuthenticated && rateLimitStatus.isLimited) {
+      navigate("/login", {
+        state: {
+          rateLimitExceeded: true,
+          message:
+            "Rate limit exceeded. Please login to continue with higher limits.",
+        },
+        replace: true,
+      });
+    }
+  }, [isAuthenticated, rateLimitStatus.isLimited, navigate]);
+
   const [threads, setThreads] = useState<ChatThread[]>([
     {
       id: "1",

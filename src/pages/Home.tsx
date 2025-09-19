@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Code,
@@ -23,8 +23,42 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const { rateLimitStatus, checkRateLimit } = useRateLimit();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  // Check rate limits when component mounts
+  useEffect(() => {
+    checkRateLimit();
+  }, [checkRateLimit]);
+
+  // Handle rate limit redirection for guests
+  useEffect(() => {
+    const isDevelopment = import.meta.env.DEV;
+
+    // Skip rate limit redirection in development mode
+    if (isDevelopment) {
+      console.log("🚀 Development Mode: Skipping rate limit redirection");
+      return;
+    }
+
+    if (!isAuthenticated && rateLimitStatus.isLimited) {
+      navigate("/login", {
+        state: {
+          rateLimitExceeded: true,
+          message:
+            "Rate limit exceeded. Please login to continue with higher limits.",
+        },
+        replace: true,
+      });
+    }
+  }, [isAuthenticated, rateLimitStatus.isLimited, navigate]);
+
   const features = [
     {
       icon: <Code className="h-8 w-8 text-blue-600" />,

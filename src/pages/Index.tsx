@@ -1,13 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FileUpload, CodeFile } from "@/components/FileUpload";
 import { CodeAnalysis } from "@/components/CodeAnalysis";
 import { BestPractices } from "@/components/BestPractices";
 import { FileText, Code, CheckCircle } from "lucide-react";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [codeFile, setCodeFile] = useState<CodeFile | null>(null);
   const [manualCode, setManualCode] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { rateLimitStatus, checkRateLimit } = useRateLimit();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  // Check rate limits when component mounts
+  useEffect(() => {
+    checkRateLimit();
+  }, [checkRateLimit]);
+
+  // Redirect to login if rate limited and not authenticated
+  useEffect(() => {
+    const isDevelopment = import.meta.env.DEV;
+
+    // Skip rate limit redirection in development mode
+    if (isDevelopment) {
+      console.log("🚀 Development Mode: Skipping rate limit redirection");
+      return;
+    }
+
+    if (!isAuthenticated && rateLimitStatus.isLimited) {
+      navigate("/login", {
+        state: {
+          rateLimitExceeded: true,
+          message:
+            "Rate limit exceeded. Please login to continue with higher limits.",
+        },
+        replace: true,
+      });
+    }
+  }, [isAuthenticated, rateLimitStatus.isLimited, navigate]);
 
   const handleFileUpload = (files: CodeFile[]) => {
     if (files.length > 0) {
@@ -23,7 +56,31 @@ const Index = () => {
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
+    const isDevelopment = import.meta.env.DEV;
+
+    // Skip rate limit check in development mode
+    if (!isDevelopment) {
+      // Check rate limits before analysis (production only)
+      await checkRateLimit();
+
+      if (!isAuthenticated && rateLimitStatus.isLimited) {
+        navigate("/login", {
+          state: {
+            rateLimitExceeded: true,
+            message:
+              "Rate limit exceeded. Please login to continue with higher limits.",
+          },
+          replace: true,
+        });
+        return;
+      }
+    } else {
+      console.log(
+        "🚀 Development Mode: Skipping rate limit check for analysis"
+      );
+    }
+
     setIsAnalyzing(true);
     // Simulate analysis delay
     setTimeout(() => {

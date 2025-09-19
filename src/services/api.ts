@@ -1,7 +1,15 @@
 import { AnalysisResults } from "@/components/ResultsDisplay";
+import type {
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  ProfileResponse,
+  UpdateProfileRequest,
+  ChangePasswordRequest,
+} from "@/types/auth";
 
-const API_BASE_URL = "https://codereviewbackend-sigma.vercel.app/api/ai";
-// const API_BASE_URL = "http://localhost:5000/api/ai";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const isDevelopment = import.meta.env.DEV;
 
 export interface CodeIssue {
   type: "bug" | "warning" | "suggestion" | "security";
@@ -73,18 +81,12 @@ export class ApiError extends Error {
   }
 }
 
-class ApiClient {
-  private baseUrl: string;
-
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
-  }
-
-  private async request<T>(
+function createApiClient(baseUrl: string) {
+  const request = async <T>(
     endpoint: string,
     options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
+  ): Promise<T> => {
+    const url = `${baseUrl}${endpoint}`;
 
     const config: RequestInit = {
       headers: {
@@ -130,45 +132,42 @@ class ApiClient {
           error instanceof Error ? error.message : "Network error occurred",
       });
     }
-  }
+  };
 
-  async get<T>(endpoint: string, headers?: Record<string, string>): Promise<T> {
-    return this.request<T>(endpoint, { method: "GET", headers });
-  }
+  return {
+    get: <T>(endpoint: string, headers?: Record<string, string>): Promise<T> =>
+      request<T>(endpoint, { method: "GET", headers }),
 
-  async post<T>(
-    endpoint: string,
-    data?: unknown,
-    headers?: Record<string, string>
-  ): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
-      headers,
-    });
-  }
+    post: <T>(
+      endpoint: string,
+      data?: unknown,
+      headers?: Record<string, string>
+    ): Promise<T> =>
+      request<T>(endpoint, {
+        method: "POST",
+        body: data ? JSON.stringify(data) : undefined,
+        headers,
+      }),
 
-  async put<T>(
-    endpoint: string,
-    data?: unknown,
-    headers?: Record<string, string>
-  ): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "PUT",
-      body: data ? JSON.stringify(data) : undefined,
-      headers,
-    });
-  }
+    put: <T>(
+      endpoint: string,
+      data?: unknown,
+      headers?: Record<string, string>
+    ): Promise<T> =>
+      request<T>(endpoint, {
+        method: "PUT",
+        body: data ? JSON.stringify(data) : undefined,
+        headers,
+      }),
 
-  async delete<T>(
-    endpoint: string,
-    headers?: Record<string, string>
-  ): Promise<T> {
-    return this.request<T>(endpoint, { method: "DELETE", headers });
-  }
+    delete: <T>(
+      endpoint: string,
+      headers?: Record<string, string>
+    ): Promise<T> => request<T>(endpoint, { method: "DELETE", headers }),
+  };
 }
 
-const apiClient = new ApiClient(API_BASE_URL);
+const apiClient = createApiClient(API_BASE_URL);
 
 export const healthApi = {
   async checkStatus(): Promise<{
@@ -421,3 +420,99 @@ export function isRateLimitError(error: unknown): error is ApiError {
 }
 
 export { apiClient };
+
+// Rate limit API functions
+export const rateLimitApi = {
+  async getStatus(): Promise<{
+    remainingRequests: number;
+    totalRequests: number;
+    resetTime: string;
+    userType: "guest" | "authenticated";
+  }> {
+    const response = await apiClient.get<{
+      remainingRequests: number;
+      totalRequests: number;
+      resetTime: string;
+      userType: "guest" | "authenticated";
+    }>("/api/rate-limit/status");
+    return response;
+  },
+
+  async checkLimit(): Promise<{
+    canProceed: boolean;
+    remainingRequests: number;
+    message?: string;
+  }> {
+    const response = await apiClient.get<{
+      canProceed: boolean;
+      remainingRequests: number;
+      message?: string;
+    }>("/api/rate-limit/check");
+    return response;
+  },
+};
+
+// Authentication API functions
+export const authApi = {
+  async login(credentials: LoginRequest): Promise<AuthResponse> {
+    const response = await apiClient.post<AuthResponse>(
+      "/api/auth/login",
+      credentials
+    );
+    return response;
+  },
+
+  async register(userData: RegisterRequest): Promise<AuthResponse> {
+    const response = await apiClient.post<AuthResponse>(
+      "/api/auth/register",
+      userData
+    );
+    return response;
+  },
+
+  async getProfile(): Promise<ProfileResponse> {
+    const token = localStorage.getItem("auth_token");
+    const response = await apiClient.get<ProfileResponse>("/api/auth/profile", {
+      Authorization: `Bearer ${token}`,
+    });
+    return response;
+  },
+
+  async updateProfile(data: UpdateProfileRequest): Promise<ProfileResponse> {
+    const token = localStorage.getItem("auth_token");
+    const response = await apiClient.put<ProfileResponse>(
+      "/api/auth/profile",
+      data,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+    return response;
+  },
+
+  async changePassword(
+    data: ChangePasswordRequest
+  ): Promise<{ message: string }> {
+    const token = localStorage.getItem("auth_token");
+    const response = await apiClient.post<{ message: string }>(
+      "/api/auth/change-password",
+      data,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+    return response;
+  },
+
+  async logout(): Promise<{ message: string }> {
+    const token = localStorage.getItem("auth_token");
+    const response = await apiClient.post<{ message: string }>(
+      "/api/auth/logout",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+    return response;
+  },
+};

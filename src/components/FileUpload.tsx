@@ -1,5 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { Upload, File, AlertCircle, X } from "lucide-react";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export interface CodeFile {
   name: string;
@@ -21,6 +24,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { rateLimitStatus, checkRateLimit } = useRateLimit();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const supportedExtensions = [
     ".js",
@@ -69,6 +75,34 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   const handleFiles = async (files: FileList) => {
     setError(null);
     setIsProcessing(true);
+
+    const isDevelopment = import.meta.env.DEV;
+
+    // Skip rate limit checking in development mode
+    if (!isDevelopment) {
+      // Check rate limits before processing files (production only)
+      await checkRateLimit();
+      if (!isAuthenticated && rateLimitStatus.isLimited) {
+        setError("Rate limit exceeded. Please login to continue.");
+        setIsProcessing(false);
+        // Redirect to login after a short delay
+        setTimeout(() => {
+          navigate("/login", {
+            state: {
+              rateLimitExceeded: true,
+              message:
+                "Rate limit exceeded. Please login to continue with higher limits.",
+            },
+            replace: true,
+          });
+        }, 2000);
+        return;
+      }
+    } else {
+      console.log(
+        "🚀 Development Mode: Skipping rate limit check for file upload"
+      );
+    }
 
     const fileArray = Array.from(files);
 
