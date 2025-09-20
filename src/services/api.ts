@@ -8,7 +8,8 @@ import type {
   ChangePasswordRequest,
 } from "@/types/auth";
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const API_BASE_URL = "https://codereviewbackend-sigma.vercel.app";
+// const API_BASE_URL = "http://localhost:5000";
 const isDevelopment = import.meta.env.DEV;
 const isMockMode = import.meta.env.VITE_MOCK_API === "true";
 
@@ -102,6 +103,57 @@ const mockResponses: Record<string, { success: boolean; data: unknown }> = {
         "Follow consistent code formatting",
         "Document complex logic",
       ],
+    },
+  },
+  "/api/auth/login": {
+    success: true,
+    data: {
+      message: "Login successful",
+      user: {
+        id: 1,
+        name: "Mock User",
+        email: "user@example.com",
+        created_at: "2025-01-01T00:00:00.000Z",
+      },
+      token: "mock-jwt-token-12345",
+    },
+  },
+  "/api/auth/register": {
+    success: true,
+    data: {
+      message: "User registered successfully",
+      user: {
+        id: 1,
+        name: "Mock User",
+        email: "user@example.com",
+        created_at: "2025-01-01T00:00:00.000Z",
+      },
+      token: "mock-jwt-token-12345",
+    },
+  },
+  "/api/auth/profile": {
+    success: true,
+    data: {
+      message: "Profile retrieved successfully",
+      user: {
+        id: 1,
+        name: "Mock User",
+        email: "user@example.com",
+        created_at: "2025-01-01T00:00:00.000Z",
+        updated_at: "2025-01-01T00:00:00.000Z",
+      },
+    },
+  },
+  "/api/auth/logout": {
+    success: true,
+    data: {
+      message: "Logout successful",
+    },
+  },
+  "/api/auth/change-password": {
+    success: true,
+    data: {
+      message: "Password changed successfully",
     },
   },
 };
@@ -201,7 +253,9 @@ function createApiClient(baseUrl: string) {
     try {
       // Check if we should use mock responses
       if (isMockMode) {
-        console.log(`🚀 [MOCK] Using mock response for ${endpoint}`);
+        console.log(
+          `🚀 [MOCK] Using mock response for ${endpoint} (Mock mode: ${isMockMode})`
+        );
         const mockResponse = getMockResponse(endpoint);
         if (mockResponse) {
           // Add a small delay to simulate network request
@@ -212,8 +266,16 @@ function createApiClient(baseUrl: string) {
             return (mockResponse as { success: boolean; data: T }).data;
           }
 
+          // For auth endpoints, return data directly (not wrapped)
+          if (endpoint.startsWith("/api/auth/")) {
+            console.log(`🔐 [MOCK] Returning auth mock data for ${endpoint}`);
+            return (mockResponse as { success: boolean; data: T }).data;
+          }
+
           // For other endpoints, return the full response structure
           return mockResponse as T;
+        } else {
+          console.log(`⚠️ [MOCK] No mock response found for ${endpoint}`);
         }
       }
 

@@ -245,9 +245,13 @@ const Header = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="hidden lg:flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
-              <div className="relative group">
-                <div className="p-3 bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                  <Code className="h-7 w-7 text-white" />
+              <div className="relative group cursor-pointer">
+                <div className="p-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                  <img
+                    src="/codify.png"
+                    alt="Codify Logo - AI-Powered Code Analysis Platform"
+                    className="h-8 w-8 object-contain"
+                  />
                 </div>
               </div>
               <div className="group">
@@ -368,15 +372,18 @@ const Header = () => {
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center space-x-3">
                 <div className="relative group">
-                  <div className="p-2 bg-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                    <Code className="h-6 w-6 text-white" />
+                  <div className="p-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <img
+                      src="/codify.png"
+                      alt="Codify Logo"
+                      className="h-6 w-6 object-contain"
+                    />
                   </div>
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-blue-600">Codify</h1>
                 </div>
-              </div>
-
+              </div>{" "}
               <button
                 onClick={toggleMobileMenu}
                 className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors duration-300"
