@@ -210,8 +210,8 @@ const Header = () => {
 
     checkApiStatus();
 
-    // Check API status every 30 seconds
-    const interval = setInterval(checkApiStatus, 30000);
+    // Check API status every 1 minute
+    const interval = setInterval(checkApiStatus, 60000);
 
     return () => clearInterval(interval);
   }, []);
@@ -270,9 +270,7 @@ const Header = () => {
               {isAuthenticated && user ? (
                 <div className="flex items-center space-x-4">
                   <div className="hidden xl:block text-right">
-                    <p className="text-sm font-medium text-gray-700">
-                      Welcome back,
-                    </p>
+                    <p className="text-sm font-medium text-gray-700">Welcome</p>
                     <p className="text-sm text-gray-500">{user.name}</p>
                   </div>
                   <DropdownMenu>
@@ -315,21 +313,21 @@ const Header = () => {
                       <DropdownMenuSeparator className="bg-gray-200" />
                       <DropdownMenuItem
                         onClick={() => navigate("/profile")}
-                        className="hover:bg-blue-50 transition-colors"
+                        className="hover:bg-blue-50 transition-colors cursor-pointer"
                       >
                         <User className="mr-3 h-4 w-4 text-blue-600" />
                         <span>Profile</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => navigate("/change-password")}
-                        className="hover:bg-purple-50 transition-colors"
+                        className="hover:bg-purple-50 transition-colors cursor-pointer"
                       >
                         <Key className="mr-3 h-4 w-4 text-purple-600" />
                         <span>Change Password</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => navigate("/review")}
-                        className="hover:bg-indigo-50 transition-colors"
+                        className="hover:bg-indigo-50 transition-colors cursor-pointer"
                       >
                         <Settings className="mr-3 h-4 w-4 text-indigo-600" />
                         <span>Code Review</span>
@@ -337,9 +335,9 @@ const Header = () => {
                       <DropdownMenuSeparator className="bg-gray-200" />
                       <DropdownMenuItem
                         onClick={handleLogout}
-                        className="hover:bg-red-50 transition-colors text-red-700"
+                        className="hover:bg-red-50 transition-colors text-red-700 cursor-pointer"
                       >
-                        <LogOut className="mr-3 h-4 w-4 text-red-600" />
+                        <LogOut className="mr-3 h-4 w-4 text-red-600 " />
                         <span>Log out</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
