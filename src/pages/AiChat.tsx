@@ -19,6 +19,8 @@ import {
   Mail,
   Clock,
   RefreshCw,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -290,6 +292,7 @@ const AiChat = () => {
   const [activeThreadId, setActiveThreadId] = useState<string>("1");
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Error handling state
   const [errorDialog, setErrorDialog] = useState<{
@@ -606,55 +609,86 @@ const AiChat = () => {
   return (
     <div className="min-h-screen bg-slate-900">
       <header className="bg-slate-900 border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 md:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden text-white hover:bg-white/10 p-2"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              >
+                {isSidebarOpen ? (
+                  <X className="h-4 w-4" />
+                ) : (
+                  <Menu className="h-4 w-4" />
+                )}
+              </Button>
               <Link to="/">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-white hover:bg-white/10"
+                  className="text-white hover:bg-white/10 px-2 md:px-3"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Home
+                  <ArrowLeft className="h-4 w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                  <span className="sm:hidden">Home</span>
                 </Button>
               </Link>
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-purple-600 rounded-lg">
-                  <MessageSquare className="h-6 w-6 text-white" />
+              <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1 md:flex-none">
+                <div className="p-1.5 md:p-2 bg-purple-600 rounded-lg flex-shrink-0">
+                  <MessageSquare className="h-4 w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">
-                    AI Chat Assistant
+                <div className="min-w-0 flex-1 md:flex-none">
+                  <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-white truncate">
+                    Codify Chat
                   </h1>
-                  <p className="text-sm text-white/70">
+                  <p className="text-xs md:text-sm text-white/70 hidden sm:block">
                     Get instant help with your code
                   </p>
                 </div>
               </div>
             </div>
 
-            <Link to="/review">
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white border-0">
-                Code Review
-              </Button>
-            </Link>
+            <div className="flex items-center space-x-2">
+              <Link to="/review">
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white border-0 px-3 md:px-4 text-sm md:text-base">
+                  <span className="hidden md:inline">Code Review</span>
+                  <span className="md:hidden">Review</span>
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-          <div className="lg:col-span-3">
-            <Card className="h-full bg-white/10 backdrop-blur-xl border-white/20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
+          <div className="md:col-span-3 md:relative">
+            <Card
+              className={`h-full bg-white/10 backdrop-blur-xl border-white/20 md:block ${
+                isSidebarOpen
+                  ? "fixed inset-y-0 left-0 z-50 w-80 md:w-auto md:static md:inset-auto"
+                  : "hidden"
+              }`}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg text-white">
                     Conversations
                   </CardTitle>
-                  <Button size="sm" className="text-white hover:bg-white/10">
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      size="sm"
+                      className="md:hidden text-white hover:bg-white/10"
+                      onClick={() => setIsSidebarOpen(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" className="text-white hover:bg-white/10">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
@@ -710,9 +744,16 @@ const AiChat = () => {
                 </ScrollArea>
               </CardContent>
             </Card>
+            {/* Mobile backdrop */}
+            {isSidebarOpen && (
+              <div
+                className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                onClick={() => setIsSidebarOpen(false)}
+              />
+            )}
           </div>
 
-          <div className="lg:col-span-9">
+          <div className="md:col-span-9">
             <Card className="h-full flex flex-col bg-white/10 backdrop-blur-xl border-white/20">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center space-x-2 text-white">
@@ -728,10 +769,13 @@ const AiChat = () => {
               {activeThread && (
                 <>
                   <CardContent className="flex-1 p-0">
-                    <ScrollArea className="h-[calc(100vh-400px)] px-6">
-                      <div className="space-y-6 py-4">
+                    <ScrollArea className="h-[calc(100vh-350px)] md:h-[calc(100vh-400px)] px-3 md:px-6">
+                      <div className="space-y-4 md:space-y-6 py-3 md:py-4">
                         {activeThread.messages.map((message) => (
-                          <div key={message.id} className="flex space-x-3">
+                          <div
+                            key={message.id}
+                            className="flex space-x-2 md:space-x-3"
+                          >
                             <div
                               className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                                 message.type === "user"
@@ -759,7 +803,7 @@ const AiChat = () => {
                               </div>
 
                               <div
-                                className={`p-3 rounded-lg ${
+                                className={`p-2 md:p-3 rounded-lg ${
                                   message.type === "user"
                                     ? "bg-blue-600/20 border border-blue-500/30"
                                     : "bg-white/10 border border-white/20"
@@ -837,7 +881,7 @@ const AiChat = () => {
 
                   <Separator className="bg-white/20" />
 
-                  <CardContent className="p-4">
+                  <CardContent className="p-3 md:p-4">
                     <div className="flex space-x-2">
                       <div className="flex-1">
                         <textarea
@@ -846,8 +890,8 @@ const AiChat = () => {
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyPress={handleKeyPress}
                           placeholder="Ask about code quality, security, performance, or any programming question..."
-                          className="w-full p-3 border border-white/20 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/10 text-white placeholder-white/50"
-                          rows={3}
+                          className="w-full p-2 md:p-3 border border-white/20 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/10 text-white placeholder-white/50 text-sm md:text-base"
+                          rows={2}
                           disabled={isTyping}
                         />
                       </div>

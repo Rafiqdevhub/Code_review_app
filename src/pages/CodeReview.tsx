@@ -264,63 +264,67 @@ const CodeReview = () => {
   return (
     <div className="min-h-screen bg-slate-900">
       <header className="bg-slate-800/50 backdrop-blur-xl shadow-sm border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 md:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <Link to="/">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-gray-200 hover:text-white hover:bg-white/10"
+                  className="text-gray-200 hover:text-white hover:bg-white/10 px-2 md:px-3"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Home
+                  <ArrowLeft className="h-4 w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                  <span className="sm:hidden">Home</span>
                 </Button>
               </Link>
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg">
+              <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1 md:flex-none">
+                <div className="p-1.5 md:p-2 rounded-lg flex-shrink-0">
                   <img
                     src="/codify.png"
                     alt="Codify Logo"
-                    className="h-6 w-6"
+                    className="h-4 w-4 md:h-5 md:w-5 lg:h-6 lg:w-6"
                   />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">Code Review</h1>
-                  <p className="text-sm text-gray-200">
+                <div className="min-w-0 flex-1 md:flex-none">
+                  <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-white truncate">
+                    Code Review
+                  </h1>
+                  <p className="text-xs md:text-sm text-gray-200 hidden sm:block">
                     Analyze and improve your code
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 md:space-x-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleSave}
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white px-2 md:px-3 text-xs md:text-sm"
               >
-                <Save className="h-4 w-4 mr-2" />
-                Save
+                <Save className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Save</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleShare}
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white px-2 md:px-3 text-xs md:text-sm"
               >
-                <Share className="h-4 w-4 mr-2" />
-                Share
+                <Share className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Share</span>
               </Button>
               <Link to="/chat">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white px-2 md:px-3 text-xs md:text-sm"
                 >
-                  <Settings className="h-4 w-4 mr-2" />
-                  AI Chat
+                  <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                  <span className="hidden md:inline">AI Chat</span>
+                  <span className="md:hidden">Chat</span>
                 </Button>
               </Link>
             </div>
@@ -328,9 +332,9 @@ const CodeReview = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-4 space-y-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
+          <div className="md:col-span-12 lg:col-span-4 space-y-4 md:space-y-6">
             <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2 text-white">
@@ -358,7 +362,10 @@ const CodeReview = () => {
                     </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="upload" className="space-y-4">
+                  <TabsContent
+                    value="upload"
+                    className="space-y-3 md:space-y-4"
+                  >
                     <FileUpload onFileUpload={handleFileUpload} multiple />
 
                     {codeFiles.length > 0 && (
@@ -369,7 +376,7 @@ const CodeReview = () => {
                         {codeFiles.map((file, index) => (
                           <div
                             key={index}
-                            className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                            className={`p-2 md:p-3 rounded-lg border cursor-pointer transition-colors ${
                               activeFile?.name === file.name
                                 ? "bg-blue-600/30 border-blue-400/60"
                                 : "bg-white/10 border-white/20 hover:bg-white/15"
@@ -398,7 +405,10 @@ const CodeReview = () => {
                     )}
                   </TabsContent>
 
-                  <TabsContent value="editor" className="space-y-4">
+                  <TabsContent
+                    value="editor"
+                    className="space-y-3 md:space-y-4"
+                  >
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-200">
                         File Name
@@ -407,7 +417,7 @@ const CodeReview = () => {
                         type="text"
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
-                        className="w-full px-3 py-2 border border-white/20 rounded-md text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/10 text-white placeholder:text-gray-400"
+                        className="w-full px-2 md:px-3 py-2 border border-white/20 rounded-md text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/10 text-white placeholder:text-gray-400"
                         placeholder="Enter filename..."
                       />
                     </div>
@@ -423,7 +433,7 @@ const CodeReview = () => {
                         id="language-select"
                         value={selectedLanguage}
                         onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="w-full px-3 py-2 border border-white/20 rounded-md text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/10 text-white [&>option]:bg-slate-800 [&>option]:text-white"
+                        className="w-full px-2 md:px-3 py-2 border border-white/20 rounded-md text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/10 text-white [&>option]:bg-slate-800 [&>option]:text-white"
                       >
                         {languages.map((lang) => (
                           <option key={lang} value={lang}>
@@ -470,7 +480,7 @@ const CodeReview = () => {
             )}
           </div>
 
-          <div className="lg:col-span-4">
+          <div className="md:col-span-6 lg:col-span-4">
             <CodeAnalysis
               code={currentCode}
               fileName={activeFile?.name || fileName}
@@ -479,7 +489,7 @@ const CodeReview = () => {
             />
           </div>
 
-          <div className="lg:col-span-4">
+          <div className="md:col-span-6 lg:col-span-4">
             {analysisResults ? (
               <ResultsDisplay results={analysisResults} />
             ) : (
