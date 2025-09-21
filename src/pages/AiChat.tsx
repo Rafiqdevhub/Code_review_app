@@ -54,7 +54,7 @@ const formatMessageContent = (content: string) => {
   // Handle undefined or null content
   if (!content) {
     return [
-      <span key="empty" className="text-gray-500 italic">
+      <span key="empty" className="text-white/70 italic">
         No content available
       </span>,
     ];
@@ -72,7 +72,7 @@ const formatMessageContent = (content: string) => {
       elements.push(
         <pre
           key={elements.length}
-          className="bg-gray-900 text-gray-100 p-3 rounded-md overflow-x-auto my-2 text-sm"
+          className="bg-slate-800 text-gray-100 p-3 rounded-md overflow-x-auto my-2 text-sm border border-white/20"
         >
           <code>{currentCodeBlock.join("\n")}</code>
         </pre>
@@ -86,7 +86,7 @@ const formatMessageContent = (content: string) => {
       elements.push(
         <ul
           key={elements.length}
-          className="list-disc list-inside space-y-1 my-2 ml-4"
+          className="list-disc list-inside space-y-1 my-2 ml-4 text-white/90"
         >
           {currentList.map((item, idx) => (
             <li key={idx} className="text-sm">
@@ -147,7 +147,7 @@ const formatMessageContent = (content: string) => {
       elements.push(
         <p
           key={elements.length}
-          className="mb-2 text-sm leading-relaxed font-medium text-gray-900"
+          className="mb-2 text-sm leading-relaxed font-medium text-white"
         >
           {headingText}
         </p>
@@ -160,7 +160,7 @@ const formatMessageContent = (content: string) => {
       elements.push(
         <p
           key={elements.length}
-          className="mb-2 text-sm leading-relaxed font-medium text-gray-900"
+          className="mb-2 text-sm leading-relaxed font-medium text-white"
         >
           {headingText}
         </p>
@@ -176,7 +176,7 @@ const formatMessageContent = (content: string) => {
           return (
             <code
               key={idx}
-              className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono"
+              className="bg-slate-700 px-1 py-0.5 rounded text-sm font-mono text-white"
             >
               {part.slice(1, -1)}
             </code>
@@ -187,7 +187,10 @@ const formatMessageContent = (content: string) => {
 
       if (trimmedLine) {
         elements.push(
-          <p key={elements.length} className="mb-2 text-sm leading-relaxed">
+          <p
+            key={elements.length}
+            className="mb-2 text-sm leading-relaxed text-white/90"
+          >
             {formattedParts}
           </p>
         );
@@ -198,7 +201,10 @@ const formatMessageContent = (content: string) => {
     // Regular paragraph
     if (trimmedLine) {
       elements.push(
-        <p key={elements.length} className="mb-2 text-sm leading-relaxed">
+        <p
+          key={elements.length}
+          className="mb-2 text-sm leading-relaxed text-white/90"
+        >
           {trimmedLine}
         </p>
       );
@@ -598,13 +604,17 @@ const AiChat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <header className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-slate-900">
+      <header className="bg-slate-900 border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link to="/">
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/10"
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Home
                 </Button>
@@ -614,10 +624,10 @@ const AiChat = () => {
                   <MessageSquare className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-white">
                     AI Chat Assistant
                   </h1>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-white/70">
                     Get instant help with your code
                   </p>
                 </div>
@@ -625,7 +635,9 @@ const AiChat = () => {
             </div>
 
             <Link to="/review">
-              <Button variant="outline">Code Review</Button>
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white border-0">
+                Code Review
+              </Button>
             </Link>
           </div>
         </div>
@@ -634,11 +646,13 @@ const AiChat = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
           <div className="lg:col-span-3">
-            <Card className="h-full">
+            <Card className="h-full bg-white/10 backdrop-blur-xl border-white/20">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Conversations</CardTitle>
-                  <Button size="sm" onClick={createNewThread}>
+                  <CardTitle className="text-lg text-white">
+                    Conversations
+                  </CardTitle>
+                  <Button size="sm" className="text-white hover:bg-white/10">
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
@@ -651,17 +665,17 @@ const AiChat = () => {
                         key={thread.id}
                         className={`p-3 rounded-lg cursor-pointer transition-colors ${
                           activeThreadId === thread.id
-                            ? "bg-blue-50 border border-blue-200"
-                            : "hover:bg-gray-50 border border-transparent"
+                            ? "bg-white/20 border border-white/30"
+                            : "hover:bg-white/10 border border-transparent"
                         }`}
                         onClick={() => setActiveThreadId(thread.id)}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
+                            <p className="text-sm font-medium text-white truncate">
                               {thread.title}
                             </p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-white/70 mt-1">
                               {formatDate(thread.lastUpdated)} •{" "}
                               {thread.messages.length} messages
                             </p>
@@ -671,14 +685,18 @@ const AiChat = () => {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-6 w-6 p-0"
+                                className="h-6 w-6 p-0 text-white hover:bg-white/10"
                               >
                                 <MoreVertical className="h-3 w-3" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent
+                              align="end"
+                              className="bg-white/10 backdrop-blur-xl border-white/20"
+                            >
                               <DropdownMenuItem
                                 onClick={() => deleteThread(thread.id)}
+                                className="text-white hover:bg-white/10"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Delete
@@ -695,13 +713,13 @@ const AiChat = () => {
           </div>
 
           <div className="lg:col-span-9">
-            <Card className="h-full flex flex-col">
+            <Card className="h-full flex flex-col bg-white/10 backdrop-blur-xl border-white/20">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 text-white">
                   <Bot className="h-5 w-5 text-purple-600" />
                   <span>{activeThread?.title || "Select a conversation"}</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/70">
                   Ask questions about code quality, security, performance, and
                   best practices
                 </CardDescription>
@@ -717,25 +735,25 @@ const AiChat = () => {
                             <div
                               className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                                 message.type === "user"
-                                  ? "bg-blue-100"
-                                  : "bg-purple-100"
+                                  ? "bg-blue-600"
+                                  : "bg-purple-600"
                               }`}
                             >
                               {message.type === "user" ? (
-                                <User className="h-5 w-5 text-blue-600" />
+                                <User className="h-5 w-5 text-white" />
                               ) : (
-                                <Bot className="h-5 w-5 text-purple-600" />
+                                <Bot className="h-5 w-5 text-white" />
                               )}
                             </div>
 
                             <div className="flex-1 space-y-2">
                               <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium text-gray-900">
+                                <span className="text-sm font-medium text-white">
                                   {message.type === "user"
                                     ? "You"
                                     : "AI Assistant"}
                                 </span>
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-white/70">
                                   {formatTime(message.timestamp)}
                                 </span>
                               </div>
@@ -743,37 +761,37 @@ const AiChat = () => {
                               <div
                                 className={`p-3 rounded-lg ${
                                   message.type === "user"
-                                    ? "bg-blue-50 border border-blue-200"
-                                    : "bg-white border border-gray-200 shadow-sm"
+                                    ? "bg-blue-600/20 border border-blue-500/30"
+                                    : "bg-white/10 border border-white/20"
                                 }`}
                               >
-                                <div className="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">
+                                <div className="text-sm text-white whitespace-pre-wrap leading-relaxed">
                                   {formatMessageContent(message.content)}
                                 </div>
 
                                 {message.type === "assistant" && (
-                                  <div className="flex items-center space-x-2 mt-3 pt-2 border-t border-gray-100">
+                                  <div className="flex items-center space-x-2 mt-3 pt-2 border-t border-white/20">
                                     <Button
                                       variant="ghost"
                                       size="sm"
                                       onClick={() =>
                                         copyMessage(message.content)
                                       }
-                                      className="text-gray-600 hover:text-gray-900"
+                                      className="text-white/70 hover:text-white hover:bg-white/10"
                                     >
                                       <Copy className="h-3 w-3" />
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="text-gray-600 hover:text-gray-900"
+                                      className="text-white/70 hover:text-white hover:bg-white/10"
                                     >
                                       <ThumbsUp className="h-3 w-3" />
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="text-gray-600 hover:text-gray-900"
+                                      className="text-white/70 hover:text-white hover:bg-white/10"
                                     >
                                       <ThumbsDown className="h-3 w-3" />
                                     </Button>
@@ -786,23 +804,26 @@ const AiChat = () => {
 
                         {isTyping && (
                           <div className="flex space-x-3">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                              <Bot className="h-5 w-5 text-purple-600" />
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                              <Bot className="h-5 w-5 text-white" />
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center space-x-2 mb-2">
-                                <span className="text-sm font-medium text-gray-900">
+                                <span className="text-sm font-medium text-white">
                                   AI Assistant
                                 </span>
-                                <Badge variant="secondary" className="text-xs">
+                                <Badge
+                                  variant="secondary"
+                                  className="text-xs bg-white/20 text-white border-white/20"
+                                >
                                   Typing...
                                 </Badge>
                               </div>
-                              <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                              <div className="p-3 bg-white/10 border border-white/20 rounded-lg">
                                 <div className="flex space-x-1">
-                                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.1s]" />
-                                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                                  <div className="w-2 h-2 bg-white/70 rounded-full animate-bounce" />
+                                  <div className="w-2 h-2 bg-white/70 rounded-full animate-bounce [animation-delay:0.1s]" />
+                                  <div className="w-2 h-2 bg-white/70 rounded-full animate-bounce [animation-delay:0.2s]" />
                                 </div>
                               </div>
                             </div>
@@ -814,7 +835,7 @@ const AiChat = () => {
                     </ScrollArea>
                   </CardContent>
 
-                  <Separator />
+                  <Separator className="bg-white/20" />
 
                   <CardContent className="p-4">
                     <div className="flex space-x-2">
@@ -825,7 +846,7 @@ const AiChat = () => {
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyPress={handleKeyPress}
                           placeholder="Ask about code quality, security, performance, or any programming question..."
-                          className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
+                          className="w-full p-3 border border-white/20 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/10 text-white placeholder-white/50"
                           rows={3}
                           disabled={isTyping}
                         />
@@ -833,13 +854,13 @@ const AiChat = () => {
                       <Button
                         onClick={sendMessage}
                         disabled={!inputValue.trim() || isTyping}
-                        className="self-end"
+                        className="self-end bg-purple-600 hover:bg-purple-700"
                       >
                         <Send className="h-4 w-4" />
                       </Button>
                     </div>
 
-                    <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                    <div className="flex items-center justify-between mt-2 text-xs text-white/70">
                       <span>Press Enter to send, Shift+Enter for new line</span>
                       <span>{inputValue.length}/2000</span>
                     </div>
@@ -858,42 +879,42 @@ const AiChat = () => {
           setErrorDialog((prev) => ({ ...prev, isOpen: open }))
         }
       >
-        <AlertDialogContent className="sm:max-w-md">
+        <AlertDialogContent className="sm:max-w-md bg-white/10 backdrop-blur-xl border-white/20">
           <AlertDialogHeader>
             <div className="flex items-center space-x-2">
               {errorDialog.type === "rate_limit" && (
-                <div className="p-2 bg-orange-100 rounded-full">
-                  <Clock className="h-5 w-5 text-orange-600" />
+                <div className="p-2 bg-orange-600 rounded-full">
+                  <Clock className="h-5 w-5 text-white" />
                 </div>
               )}
               {errorDialog.type === "network" && (
-                <div className="p-2 bg-red-100 rounded-full">
-                  <RefreshCw className="h-5 w-5 text-red-600" />
+                <div className="p-2 bg-red-600 rounded-full">
+                  <RefreshCw className="h-5 w-5 text-white" />
                 </div>
               )}
               {(errorDialog.type === "server" ||
                 errorDialog.type === "unknown") && (
-                <div className="p-2 bg-red-100 rounded-full">
-                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                <div className="p-2 bg-red-600 rounded-full">
+                  <AlertTriangle className="h-5 w-5 text-white" />
                 </div>
               )}
-              <AlertDialogTitle className="text-lg font-semibold">
+              <AlertDialogTitle className="text-lg font-semibold text-white">
                 {errorDialog.title}
               </AlertDialogTitle>
             </div>
           </AlertDialogHeader>
 
-          <AlertDialogDescription className="text-sm text-gray-600 space-y-3">
+          <AlertDialogDescription className="text-sm text-white/70 space-y-3">
             <p>{errorDialog.message}</p>
 
             {errorDialog.details && (
-              <div className="bg-gray-50 p-3 rounded-md border-l-4 border-orange-400">
-                <p className="text-sm font-medium text-gray-800 mb-1">
+              <div className="bg-white/10 p-3 rounded-md border-l-4 border-orange-400">
+                <p className="text-sm font-medium text-white mb-1">
                   Contact Information:
                 </p>
                 <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-700">
+                  <Mail className="h-4 w-4 text-white/70" />
+                  <span className="text-sm text-white/70">
                     {errorDialog.details}
                   </span>
                 </div>
@@ -901,11 +922,11 @@ const AiChat = () => {
             )}
 
             {errorDialog.type === "rate_limit" && (
-              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
-                <p className="text-sm font-medium text-blue-800 mb-1">
+              <div className="bg-white/10 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-white mb-1">
                   What can you do?
                 </p>
-                <ul className="text-sm text-blue-700 space-y-1">
+                <ul className="text-sm text-white/70 space-y-1">
                   <li>
                     • Wait for the daily limit to reset (resets at midnight UTC)
                   </li>
@@ -920,11 +941,11 @@ const AiChat = () => {
             )}
 
             {errorDialog.type === "network" && (
-              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
-                <p className="text-sm font-medium text-blue-800 mb-1">
+              <div className="bg-white/10 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-white mb-1">
                   Troubleshooting:
                 </p>
-                <ul className="text-sm text-blue-700 space-y-1">
+                <ul className="text-sm text-white/70 space-y-1">
                   <li>• Check your internet connection</li>
                   <li>• Try refreshing the page</li>
                   <li>• Wait a moment and try again</li>
@@ -934,11 +955,11 @@ const AiChat = () => {
 
             {(errorDialog.type === "server" ||
               errorDialog.type === "unknown") && (
-              <div className="bg-blue-50 p-3 rounded-md border-l-4 border-blue-400">
-                <p className="text-sm font-medium text-blue-800 mb-1">
+              <div className="bg-white/10 p-3 rounded-md border-l-4 border-blue-400">
+                <p className="text-sm font-medium text-white mb-1">
                   What to try:
                 </p>
-                <ul className="text-sm text-blue-700 space-y-1">
+                <ul className="text-sm text-white/70 space-y-1">
                   <li>• Wait a few minutes and try again</li>
                   <li>• Refresh the page</li>
                   <li>• If the problem persists, contact support</li>
@@ -969,6 +990,7 @@ const AiChat = () => {
               onClick={() =>
                 setErrorDialog((prev) => ({ ...prev, isOpen: false }))
               }
+              className="border-white/20 text-white hover:bg-white/10"
             >
               Close
             </AlertDialogCancel>

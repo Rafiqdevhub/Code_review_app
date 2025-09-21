@@ -2,7 +2,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, Mail, Calendar, Edit3, Save, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import { User, Mail, Calendar, Edit3, Save, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,77 +72,86 @@ const Profile: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Loading profile...
-          </h2>
+          <h2 className="text-2xl font-bold text-white">Loading profile...</h2>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-slate-900 py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-          <p className="mt-2 text-gray-600">Manage your account information</p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-gray-200 hover:text-white mb-4 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Link>
+          <h1 className="text-3xl font-bold text-white">Profile Settings</h1>
+          <p className="mt-2 text-gray-200">Manage your account information</p>
         </div>
 
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-white">
               <User className="h-5 w-5" />
               Personal Information
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-gray-200">
               Update your personal details and account information
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="text-gray-200">
+                  Full Name
+                </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="name"
                     type="text"
                     placeholder="Enter your full name"
-                    className="pl-10"
+                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                     disabled={!isEditing}
                     {...register("name")}
                   />
                 </div>
                 {errors.name && (
-                  <p className="text-sm text-red-600">{errors.name.message}</p>
+                  <p className="text-sm text-red-400">{errors.name.message}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-gray-200">
+                  Email Address
+                </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    className="pl-10"
+                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                     disabled={!isEditing}
                     {...register("email")}
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-sm text-red-600">{errors.email.message}</p>
+                  <p className="text-sm text-red-400">{errors.email.message}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label>Account Created</Label>
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md">
+                <Label className="text-gray-200">Account Created</Label>
+                <div className="flex items-center gap-2 p-3 bg-white/10 backdrop-blur-sm rounded-md border border-white/20">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-200">
                     {new Date(user.created_at).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -152,9 +162,9 @@ const Profile: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>User ID</Label>
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <span className="text-sm font-mono text-gray-600">
+                <Label className="text-gray-200">User ID</Label>
+                <div className="p-3 bg-white/10 backdrop-blur-sm rounded-md border border-white/20">
+                  <span className="text-sm font-mono text-gray-200">
                     {user.id}
                   </span>
                 </div>
@@ -165,7 +175,7 @@ const Profile: React.FC = () => {
                   <Button
                     type="button"
                     onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
                   >
                     <Edit3 className="h-4 w-4" />
                     Edit Profile
@@ -175,7 +185,7 @@ const Profile: React.FC = () => {
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       <Save className="h-4 w-4" />
                       {isLoading ? "Saving..." : "Save Changes"}
@@ -184,7 +194,7 @@ const Profile: React.FC = () => {
                       type="button"
                       variant="outline"
                       onClick={handleCancel}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 border-white/20 text-gray-200 hover:bg-white/10 hover:text-white"
                     >
                       <X className="h-4 w-4" />
                       Cancel
@@ -196,24 +206,24 @@ const Profile: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="mt-6">
+        <Card className="mt-6 bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-orange-600">Rate Limiting</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-orange-400">Rate Limiting</CardTitle>
+            <CardDescription className="text-gray-200">
               Your current usage limits based on authentication status
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="p-4 bg-orange-50 rounded-md">
+            <div className="p-4 bg-orange-500/10 backdrop-blur-sm rounded-md border border-orange-400/20">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-orange-800">
+                <span className="text-sm font-medium text-orange-300">
                   Daily Request Limit
                 </span>
-                <span className="text-sm font-bold text-orange-800">
+                <span className="text-sm font-bold text-orange-300">
                   100 requests
                 </span>
               </div>
-              <p className="mt-2 text-xs text-orange-700">
+              <p className="mt-2 text-xs text-orange-200">
                 As an authenticated user, you have access to 100 requests per
                 day. This is much higher than the 10 requests allowed for
                 guests.

@@ -8,8 +8,8 @@ import type {
   ChangePasswordRequest,
 } from "@/types/auth";
 
-const API_BASE_URL = "https://codify-backend-sigma.vercel.app";
-// const API_BASE_URL = "http://localhost:5000";
+// const API_BASE_URL = "https://codify-backend-sigma.vercel.app";
+const API_BASE_URL = "http://localhost:5000";
 const isDevelopment = import.meta.env.DEV;
 const isMockMode = import.meta.env.VITE_MOCK_API === "true";
 

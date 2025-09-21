@@ -192,8 +192,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         onDragLeave={handleDragLeave}
         className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors duration-200 ${
           isDragOver
-            ? "border-blue-400 bg-blue-50"
-            : "border-gray-300 hover:border-gray-400"
+            ? "border-blue-400 bg-blue-900/20"
+            : "border-white/20 hover:border-white/30"
         } ${isProcessing ? "opacity-50 pointer-events-none" : ""}`}
       >
         <input
@@ -209,32 +209,32 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         <div className="space-y-3">
           <div
             className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center ${
-              isDragOver ? "bg-blue-100" : "bg-gray-100"
+              isDragOver ? "bg-blue-900/30" : "bg-white/10"
             }`}
           >
             {isProcessing ? (
-              <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-400 border-t-blue-600" />
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-600 border-t-blue-400" />
             ) : (
               <Upload
                 className={`h-6 w-6 ${
-                  isDragOver ? "text-blue-600" : "text-gray-600"
+                  isDragOver ? "text-blue-400" : "text-gray-400"
                 }`}
               />
             )}
           </div>
 
           <div>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-white">
               {isProcessing ? (
                 "Processing files..."
               ) : (
                 <>
                   Drop your code file{multiple ? "(s)" : ""} here, or{" "}
-                  <span className="text-blue-600">browse</span>
+                  <span className="text-blue-400">browse</span>
                 </>
               )}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-400 mt-1">
               {multiple ? `Up to ${maxFiles} files. ` : ""}Supports: JS, TS,
               Python, Java, C++, and more
             </p>
@@ -243,14 +243,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       </div>
 
       {error && (
-        <div className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-red-900/20 border border-red-800/50 rounded-lg">
           <div className="flex items-center space-x-2">
-            <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
-            <p className="text-sm text-red-700">{error}</p>
+            <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
+            <p className="text-sm text-red-300">{error}</p>
           </div>
           <button
             onClick={() => setError(null)}
-            className="text-red-400 hover:text-red-600"
+            className="text-red-400 hover:text-red-300"
             title="Dismiss error"
             aria-label="Dismiss error"
           >
@@ -259,7 +259,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         </div>
       )}
 
-      <div className="text-xs text-gray-500">
+      <div className="text-xs text-gray-400">
         <p className="font-medium mb-1">Supported file types:</p>
         <p>{supportedExtensions.join(", ")}</p>
         <p className="mt-1">

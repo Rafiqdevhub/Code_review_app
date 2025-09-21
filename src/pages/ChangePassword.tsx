@@ -63,46 +63,48 @@ const ChangePassword: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-slate-900 py-8">
       <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <Link
-            to="/profile"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+            to="/"
+            className="inline-flex items-center gap-2 text-gray-200 hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Profile
+            Back
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Change Password</h1>
-          <p className="mt-2 text-gray-600">Update your account password</p>
+          <h1 className="text-3xl font-bold text-white">Change Password</h1>
+          <p className="mt-2 text-gray-200">Update your account password</p>
         </div>
 
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-blue-600" />
-              <CardTitle>Password Security</CardTitle>
+              <Shield className="h-5 w-5 text-blue-400" />
+              <CardTitle className="text-white">Password Security</CardTitle>
             </div>
-            <CardDescription>
+            <CardDescription className="text-gray-200">
               Choose a strong password to keep your account secure
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
+                <Label htmlFor="currentPassword" className="text-gray-200">
+                  Current Password
+                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="currentPassword"
                     type={showCurrentPassword ? "text" : "password"}
                     placeholder="Enter your current password"
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                     {...register("currentPassword")}
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-200 transition-colors"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
                     {showCurrentPassword ? (
@@ -113,26 +115,28 @@ const ChangePassword: React.FC = () => {
                   </button>
                 </div>
                 {errors.currentPassword && (
-                  <p className="text-sm text-red-600">
+                  <p className="text-sm text-red-400">
                     {errors.currentPassword.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
+                <Label htmlFor="newPassword" className="text-gray-200">
+                  New Password
+                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="newPassword"
                     type={showNewPassword ? "text" : "password"}
                     placeholder="Enter your new password"
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                     {...register("newPassword")}
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-200 transition-colors"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                   >
                     {showNewPassword ? (
@@ -143,26 +147,28 @@ const ChangePassword: React.FC = () => {
                   </button>
                 </div>
                 {errors.newPassword && (
-                  <p className="text-sm text-red-600">
+                  <p className="text-sm text-red-400">
                     {errors.newPassword.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
+                <Label htmlFor="confirmNewPassword" className="text-gray-200">
+                  Confirm New Password
+                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="confirmNewPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your new password"
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                     {...register("confirmNewPassword")}
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-200 transition-colors"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -173,22 +179,26 @@ const ChangePassword: React.FC = () => {
                   </button>
                 </div>
                 {errors.confirmNewPassword && (
-                  <p className="text-sm text-red-600">
+                  <p className="text-sm text-red-400">
                     {errors.confirmNewPassword.message}
                   </p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={isLoading}
+              >
                 {isLoading ? "Updating password..." : "Update Password"}
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-blue-50 rounded-md">
-              <h4 className="text-sm font-medium text-blue-800 mb-2">
+            <div className="mt-6 p-4 bg-blue-500/10 backdrop-blur-sm rounded-md border border-blue-400/20">
+              <h4 className="text-sm font-medium text-blue-300 mb-2">
                 Password Requirements:
               </h4>
-              <ul className="text-xs text-blue-700 space-y-1">
+              <ul className="text-xs text-blue-200 space-y-1">
                 <li>• At least 8 characters long</li>
                 <li>• Use a mix of letters, numbers, and symbols</li>
                 <li>• Avoid common passwords</li>

@@ -48,21 +48,21 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   return (
     <div
       className={cn(
-        "relative border border-gray-300 rounded-lg overflow-hidden",
+        "relative border border-white/20 rounded-lg overflow-hidden bg-white/5 backdrop-blur-sm",
         className
       )}
     >
-      <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
-        <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+      <div className="flex items-center justify-between px-3 py-2 bg-white/10 border-b border-white/20">
+        <span className="text-xs font-medium text-gray-200 uppercase tracking-wide">
           {language}
         </span>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-gray-400">
           {lineCount} line{lineCount !== 1 ? "s" : ""}
         </span>
       </div>
 
       <div className="relative">
-        <div className="absolute left-0 top-0 p-3 bg-gray-50 border-r border-gray-200 text-xs text-gray-500 font-mono select-none">
+        <div className="absolute left-0 top-0 p-3 bg-white/10 border-r border-white/20 text-xs text-gray-500 font-mono select-none">
           {Array.from({ length: Math.max(lineCount, 1) }, (_, i) => (
             <div key={i} className="h-6 leading-6">
               {i + 1}
@@ -77,22 +77,22 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           readOnly={readOnly}
           className={cn(
             "w-full pl-14 pr-3 py-3 font-mono text-sm resize-none outline-none",
-            "placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500",
-            "min-h-[120px] max-h-[480px]",
-            readOnly ? "bg-gray-50 text-gray-700" : "bg-white text-gray-900"
+            "placeholder:text-gray-500 focus:ring-2 focus:ring-blue-400 focus:border-blue-400",
+            "min-h-[120px] max-h-[480px] bg-white/5 text-white",
+            readOnly ? "bg-white/5 text-gray-300" : "bg-white/5 text-white"
           )}
           style={{ height: `${height}px` }}
           spellCheck={false}
         />
 
         {!value && (
-          <div className="absolute top-3 left-14 text-gray-400 text-sm font-mono pointer-events-none">
+          <div className="absolute top-3 left-14 text-gray-500 text-sm font-mono pointer-events-none">
             {getLanguageHint(language)}
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
+      <div className="flex items-center justify-between px-3 py-2 bg-white/10 border-t border-white/20 text-xs text-gray-400">
         <span>
           {value.length} character{value.length !== 1 ? "s" : ""}
         </span>
