@@ -79,7 +79,6 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-slate-900">
       <Header />
-
       {/* Hero Section with Advanced Design */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 bg-slate-900"></div>
@@ -128,7 +127,6 @@ const Home = () => {
                 >
                   <FileText className="mr-3 h-6 w-6" />
                   Start Code Review
-                  <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>
               </Link>
               <Link to="/chat">
@@ -239,16 +237,6 @@ const Home = () => {
                         </span>
                       </div>
                     ))}
-                  </div>
-
-                  <div className="mt-6">
-                    <Button
-                      variant="ghost"
-                      className="w-full hover:bg-white/20 text-gray-200 hover:text-white transition-all duration-300 border border-white/20 hover:border-white/40"
-                    >
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

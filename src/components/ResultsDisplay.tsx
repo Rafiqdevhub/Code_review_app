@@ -7,7 +7,6 @@ import {
   TrendingUp,
   AlertCircle,
   CheckCircle,
-  Clock,
   Target,
   Info,
 } from "lucide-react";

@@ -13,7 +13,6 @@ import {
   Copy,
   ThumbsUp,
   ThumbsDown,
-  RotateCcw,
   Trash2,
   AlertTriangle,
   Mail,

@@ -8,7 +8,6 @@ import { RateLimitProvider } from "@/contexts/RateLimitContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DevelopmentBanner from "@/components/DevelopmentBanner";
 import Home from "./pages/Home";
-import Index from "./pages/Index";
 import CodeReview from "./pages/CodeReview";
 import AiChat from "./pages/AiChat";
 import Login from "./pages/Login";
@@ -46,7 +45,6 @@ const App = () => (
                 }
               />
               <Route path="/" element={<Home />} />
-              <Route path="/old" element={<Index />} />
               <Route path="/review" element={<CodeReview />} />
               <Route path="/chat" element={<AiChat />} />
               <Route
