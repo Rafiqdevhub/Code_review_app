@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Shield,
   FileText,
   MessageSquare,
   CheckCircle,
@@ -10,10 +9,15 @@ import {
   Sparkles,
   Target,
   Award,
-  Clock,
   Rocket,
 } from "lucide-react";
-import { features, gettingStartedSteps } from "@/data/home_data";
+import {
+  features,
+  gettingStartedSteps,
+  stats,
+  benefits,
+  testimonials,
+} from "@/data/home_data";
 import {
   Card,
   CardContent,
@@ -170,24 +174,19 @@ const Home = () => {
 
             {/* Live Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-                <div className="text-2xl sm:text-3xl font-bold text-blue-400 group-hover:scale-110 transition-transform">
-                  10K+
+              {stats.map((stat, index) => (
+                <div
+                  key={index}
+                  className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300 group"
+                >
+                  <div
+                    className={`text-2xl sm:text-3xl font-bold ${stat.color} group-hover:scale-110 transition-transform`}
+                  >
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-gray-300">{stat.label}</div>
                 </div>
-                <div className="text-sm text-gray-300">Developers</div>
-              </div>
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-                <div className="text-2xl sm:text-3xl font-bold text-green-400 group-hover:scale-110 transition-transform">
-                  1M+
-                </div>
-                <div className="text-sm text-gray-300">Code Reviews</div>
-              </div>
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-                <div className="text-2xl sm:text-3xl font-bold text-purple-400 group-hover:scale-110 transition-transform">
-                  99.9%
-                </div>
-                <div className="text-sm text-gray-300">Uptime</div>
-              </div>
+              ))}
             </div>
 
             {/* Scroll Down Indicator */}
@@ -372,40 +371,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: <Clock className="h-8 w-8 text-blue-400" />,
-                title: "50% Faster Reviews",
-                description:
-                  "AI-powered code analysis completes reviews in minutes, not hours",
-                color: "from-blue-500/20 to-blue-600/20",
-                borderColor: "border-blue-400/30",
-              },
-              {
-                icon: <Shield className="h-8 w-8 text-green-400" />,
-                title: "Enhanced Security",
-                description:
-                  "Catch vulnerabilities and security issues before they reach production",
-                color: "from-green-500/20 to-green-600/20",
-                borderColor: "border-green-400/30",
-              },
-              {
-                icon: <Award className="h-8 w-8 text-purple-400" />,
-                title: "Code Quality",
-                description:
-                  "Maintain consistent coding standards and best practices automatically",
-                color: "from-purple-500/20 to-purple-600/20",
-                borderColor: "border-purple-400/30",
-              },
-              {
-                icon: <Sparkles className="h-8 w-8 text-yellow-400" />,
-                title: "AI Learning",
-                description:
-                  "Continuously improves recommendations based on your coding patterns",
-                color: "from-yellow-500/20 to-yellow-600/20",
-                borderColor: "border-yellow-400/30",
-              },
-            ].map((benefit, index) => (
+            {benefits.map((benefit, index) => (
               <div
                 key={index}
                 className={`group bg-gradient-to-br ${benefit.color} backdrop-blur-xl border ${benefit.borderColor} rounded-2xl p-6 hover:scale-105 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10`}
@@ -452,38 +418,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Sarah Chen",
-                role: "Senior Full-Stack Developer",
-                company: "TechCorp",
-                avatar: "SC",
-                rating: 5,
-                review:
-                  "Codify has revolutionized our code review process. The AI suggestions are incredibly accurate and have helped us catch critical bugs before they reach production.",
-                highlight: "Reduced our bug rate by 60%",
-              },
-              {
-                name: "Marcus Rodriguez",
-                role: "Lead Backend Engineer",
-                company: "StartupXYZ",
-                avatar: "MR",
-                rating: 5,
-                review:
-                  "The security analysis feature is a game-changer. It caught vulnerabilities that our entire security team missed. Absolutely essential for modern development.",
-                highlight: "Found 15+ security vulnerabilities",
-              },
-              {
-                name: "Emily Watson",
-                role: "DevOps Engineer",
-                company: "CloudTech",
-                avatar: "EW",
-                rating: 5,
-                review:
-                  "Integration was seamless and the AI chat feature helps our junior developers learn best practices. The platform pays for itself in developer productivity.",
-                highlight: "30% faster code reviews",
-              },
-            ].map((testimonial, index) => (
+            {testimonials.map((testimonial, index) => (
               <Card
                 key={index}
                 className="bg-white/8 backdrop-blur-xl border border-white/20 hover:bg-white/12 transition-all duration-500 hover:scale-105 hover:shadow-2xl group shadow-xl relative overflow-hidden"

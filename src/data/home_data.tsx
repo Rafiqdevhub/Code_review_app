@@ -9,7 +9,13 @@ import {
   Code,
   Brain,
   Zap,
+  Clock,
+  Award,
+  Sparkles,
+  CheckCircle,
+  Star,
 } from "lucide-react";
+
 export const gettingStartedSteps = [
   {
     icon: <Upload className="h-8 w-8" />,
@@ -37,21 +43,6 @@ export const gettingStartedSteps = [
     color: "text-green-600",
     bgColor: "bg-green-100",
     hoverColor: "hover:bg-green-200",
-  },
-];
-
-export const stats = [
-  { icon: <Users className="h-6 w-6" />, value: "50K+", label: "Developers" },
-  {
-    icon: <FileText className="h-6 w-6" />,
-    value: "1M+",
-    label: "Code Reviews",
-  },
-  { icon: <Shield className="h-6 w-6" />, value: "99.9%", label: "Accuracy" },
-  {
-    icon: <TrendingUp className="h-6 w-6" />,
-    value: "40%",
-    label: "Faster Development",
   },
 ];
 
@@ -98,7 +89,6 @@ export const features = [
     color: "green-500",
     bgColor: "green-50",
   },
-
   {
     icon: <Zap className="h-8 w-8 text-yellow-600" />,
     title: "Real-time Feedback",
@@ -112,5 +102,109 @@ export const features = [
     ],
     color: "yellow-500",
     bgColor: "yellow-50",
+  },
+];
+
+export const stats = [
+  {
+    value: "10K+",
+    label: "Developers",
+    color: "text-blue-400",
+  },
+  {
+    value: "1M+",
+    label: "Code Reviews",
+    color: "text-green-400",
+  },
+  {
+    value: "99.9%",
+    label: "Uptime",
+    color: "text-purple-400",
+  },
+];
+
+export const benefits = [
+  {
+    icon: <Clock className="h-8 w-8 text-blue-400" />,
+    title: "50% Faster Reviews",
+    description:
+      "AI-powered code analysis completes reviews in minutes, not hours",
+    color: "from-blue-500/20 to-blue-600/20",
+    borderColor: "border-blue-400/30",
+  },
+  {
+    icon: <Shield className="h-8 w-8 text-green-400" />,
+    title: "Enhanced Security",
+    description:
+      "Catch vulnerabilities and security issues before they reach production",
+    color: "from-green-500/20 to-green-600/20",
+    borderColor: "border-green-400/30",
+  },
+  {
+    icon: <Award className="h-8 w-8 text-purple-400" />,
+    title: "Code Quality",
+    description:
+      "Maintain consistent coding standards and best practices automatically",
+    color: "from-purple-500/20 to-purple-600/20",
+    borderColor: "border-purple-400/30",
+  },
+  {
+    icon: <Sparkles className="h-8 w-8 text-yellow-400" />,
+    title: "AI Learning",
+    description:
+      "Continuously improves recommendations based on your coding patterns",
+    color: "from-yellow-500/20 to-yellow-600/20",
+    borderColor: "border-yellow-400/30",
+  },
+];
+
+export const testimonials = [
+  {
+    name: "Sarah Chen",
+    role: "Senior Full-Stack Developer",
+    company: "TechCorp",
+    avatar: "SC",
+    rating: 5,
+    review:
+      "Codify has revolutionized our code review process. The AI suggestions are incredibly accurate and have helped us catch critical bugs before they reach production.",
+    highlight: "Reduced our bug rate by 60%",
+  },
+  {
+    name: "Marcus Rodriguez",
+    role: "Lead Backend Engineer",
+    company: "StartupXYZ",
+    avatar: "MR",
+    rating: 5,
+    review:
+      "The security analysis feature is a game-changer. It caught vulnerabilities that our entire security team missed. Absolutely essential for modern development.",
+    highlight: "Found 15+ security vulnerabilities",
+  },
+  {
+    name: "Emily Watson",
+    role: "DevOps Engineer",
+    company: "CloudTech",
+    avatar: "EW",
+    rating: 5,
+    review:
+      "Integration was seamless and the AI chat feature helps our junior developers learn best practices. The platform pays for itself in developer productivity.",
+    highlight: "30% faster code reviews",
+  },
+];
+
+export const ctaItems = [
+  {
+    value: "14-Day",
+    subtitle: "Free Trial",
+    color: "text-yellow-400",
+  },
+  {
+    value: "No",
+    subtitle: "Credit Card Required",
+    color: "text-green-400",
+  },
+  {
+    value: "24/7",
+    subtitle: "AI Support",
+    color: "text-blue-400",
   },
 ];
