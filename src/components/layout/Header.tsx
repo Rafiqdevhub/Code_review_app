@@ -19,6 +19,8 @@ import {
   Shield,
   Menu,
   X,
+  Mail,
+  Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +32,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { RateLimitStatus } from "@/types/rateLimit";
 import { ENV } from "@/config/environment";
 
@@ -178,6 +191,14 @@ const Header = () => {
     lastCheck: new Date(),
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const { rateLimitStatus } = useRateLimit();
   const navigate = useNavigate();
@@ -230,6 +251,35 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Here you would typically send the contact form data to your backend
+      console.log("Contact form submitted:", contactForm);
+
+      // Reset form and close modal
+      setContactForm({ name: "", email: "", subject: "", message: "" });
+      setIsContactModalOpen(false);
+
+      // You could show a success toast here
+      alert("Thank you for your message! We'll get back to you soon.");
+    } catch (error) {
+      console.error("Contact form submission failed:", error);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleContactInputChange = (field: string, value: string) => {
+    setContactForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const getUserInitials = (name: string) => {
     return name
       .split(" ")
@@ -265,6 +315,142 @@ const Header = () => {
             </div>
 
             <div className="flex items-center space-x-4">
+              <Dialog
+                open={isContactModalOpen}
+                onOpenChange={setIsContactModalOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-200 hover:text-white hover:bg-white/10 transition-all duration-300 font-medium"
+                  >
+                    <Mail className="h-4 w-4 mr-2" />
+                    Contact
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md bg-slate-900/95 backdrop-blur-xl border border-white/20 text-white shadow-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center space-x-2 text-xl font-bold text-white">
+                      <div className="p-2 bg-blue-600 rounded-lg">
+                        <Mail className="h-5 w-5 text-white" />
+                      </div>
+                      <span>Contact Us</span>
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-300">
+                      Have questions or feedback? We'd love to hear from you!
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <form onSubmit={handleContactSubmit} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-name" className="text-gray-200">
+                          Name
+                        </Label>
+                        <Input
+                          id="contact-name"
+                          type="text"
+                          placeholder="Your name"
+                          value={contactForm.name}
+                          onChange={(e) =>
+                            handleContactInputChange("name", e.target.value)
+                          }
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="contact-email"
+                          className="text-gray-200"
+                        >
+                          Email
+                        </Label>
+                        <Input
+                          id="contact-email"
+                          type="email"
+                          placeholder="your@email.com"
+                          value={contactForm.email}
+                          onChange={(e) =>
+                            handleContactInputChange("email", e.target.value)
+                          }
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="contact-subject"
+                        className="text-gray-200"
+                      >
+                        Subject
+                      </Label>
+                      <Input
+                        id="contact-subject"
+                        type="text"
+                        placeholder="What's this about?"
+                        value={contactForm.subject}
+                        onChange={(e) =>
+                          handleContactInputChange("subject", e.target.value)
+                        }
+                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="contact-message"
+                        className="text-gray-200"
+                      >
+                        Message
+                      </Label>
+                      <Textarea
+                        id="contact-message"
+                        placeholder="Tell us more..."
+                        value={contactForm.message}
+                        onChange={(e) =>
+                          handleContactInputChange("message", e.target.value)
+                        }
+                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-none"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex justify-end space-x-3 pt-4">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setIsContactModalOpen(false)}
+                        className="bg-white/10 border border-white/20 text-gray-200 hover:bg-white/20 hover:text-white transition-colors"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4 mr-2" />
+                            Send Message
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
               <StatusIndicator
                 status={apiStatus.status}
                 responseTime={apiStatus.responseTime}
@@ -456,6 +642,16 @@ const Header = () => {
                           <span className="text-gray-200">Code Review</span>
                         </button>
                         <button
+                          onClick={() => {
+                            setIsContactModalOpen(true);
+                            closeMobileMenu();
+                          }}
+                          className="w-full flex items-center space-x-3 p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                        >
+                          <Mail className="h-5 w-5 text-blue-400" />
+                          <span className="text-gray-200">Contact</span>
+                        </button>
+                        <button
                           onClick={handleLogout}
                           className="w-full flex items-center space-x-3 p-3 bg-white/10 rounded-lg hover:bg-red-700 transition-colors text-red-400"
                         >
@@ -474,6 +670,16 @@ const Header = () => {
                           Sign in
                         </Button>
                       </Link>
+                      <button
+                        onClick={() => {
+                          setIsContactModalOpen(true);
+                          closeMobileMenu();
+                        }}
+                        className="w-full flex items-center justify-center space-x-3 p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-gray-200"
+                      >
+                        <Mail className="h-5 w-5 text-blue-400" />
+                        <span>Contact</span>
+                      </button>
                       <Link to="/register" onClick={closeMobileMenu}>
                         <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium">
                           Get Started

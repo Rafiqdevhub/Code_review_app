@@ -26,8 +26,8 @@ const Footer = () => {
 
       <div className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
-            <div className="sm:col-span-2 lg:col-span-1 space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
+            <div className="space-y-4 sm:space-y-6">
               <div className="flex items-center space-x-3 sm:space-x-4">
                 <div className="relative group">
                   <div className="p-2 sm:p-3 bg-blue-600 rounded-lg sm:rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300">
@@ -182,51 +182,6 @@ const Footer = () => {
                     </a>
                   </li>
                 </ul>
-              </div>
-            </div>
-
-            <div className="sm:col-span-2 lg:col-span-1 space-y-4 sm:space-y-6">
-              <div>
-                <h4 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6 relative">
-                  Stay Connected
-                  <div className="absolute -bottom-2 left-0 w-6 sm:w-8 h-0.5 bg-blue-500"></div>
-                </h4>
-
-                <div className="space-y-3 sm:space-y-4">
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    Get the latest updates on AI-powered code analysis and
-                    developer tools.
-                  </p>
-
-                  <div className="space-y-3">
-                    <div className="flex flex-col sm:flex-row">
-                      <input
-                        type="email"
-                        placeholder="Enter your email"
-                        className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg sm:rounded-l-lg sm:rounded-r-none text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2 sm:mb-0"
-                      />
-                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg sm:rounded-l-none sm:rounded-r-lg transition-colors duration-300 whitespace-nowrap">
-                        Subscribe
-                      </button>
-                    </div>
-                    <p className="text-xs text-gray-400">
-                      No spam, unsubscribe anytime.
-                    </p>
-                  </div>
-
-                  <div className="pt-3 sm:pt-4 border-t border-slate-700">
-                    <p className="text-gray-300 text-sm mb-2">
-                      Questions about our platform?
-                    </p>
-                    <a
-                      href="mailto:rafkhan9323@gmail.com"
-                      className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors duration-300 text-sm font-medium"
-                    >
-                      <Mail className="h-4 w-4 mr-2" />
-                      <span className="break-all">rafkhan9323@gmail.com</span>
-                    </a>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
