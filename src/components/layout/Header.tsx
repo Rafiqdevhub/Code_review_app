@@ -329,7 +329,7 @@ const Header = () => {
                     Contact
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md bg-slate-900/95 backdrop-blur-xl border border-white/20 text-white shadow-2xl">
+                <DialogContent className="w-[95vw] max-w-[500px] sm:max-w-md bg-slate-900/95 backdrop-blur-xl border border-white/20 text-white shadow-2xl mx-4">
                   <DialogHeader>
                     <DialogTitle className="flex items-center space-x-2 text-xl font-bold text-white">
                       <div className="p-2 bg-blue-600 rounded-lg">
@@ -342,10 +342,16 @@ const Header = () => {
                     </DialogDescription>
                   </DialogHeader>
 
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                  <form
+                    onSubmit={handleContactSubmit}
+                    className="space-y-3 sm:space-y-4"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="contact-name" className="text-gray-200">
+                        <Label
+                          htmlFor="contact-name"
+                          className="text-gray-200 text-sm"
+                        >
                           Name
                         </Label>
                         <Input
@@ -356,14 +362,14 @@ const Header = () => {
                           onChange={(e) =>
                             handleContactInputChange("name", e.target.value)
                           }
-                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500 h-10 sm:h-11"
                           required
                         />
                       </div>
                       <div className="space-y-2">
                         <Label
                           htmlFor="contact-email"
-                          className="text-gray-200"
+                          className="text-gray-200 text-sm"
                         >
                           Email
                         </Label>
@@ -375,7 +381,7 @@ const Header = () => {
                           onChange={(e) =>
                             handleContactInputChange("email", e.target.value)
                           }
-                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500 h-10 sm:h-11"
                           required
                         />
                       </div>
@@ -384,7 +390,7 @@ const Header = () => {
                     <div className="space-y-2">
                       <Label
                         htmlFor="contact-subject"
-                        className="text-gray-200"
+                        className="text-gray-200 text-sm"
                       >
                         Subject
                       </Label>
@@ -396,7 +402,7 @@ const Header = () => {
                         onChange={(e) =>
                           handleContactInputChange("subject", e.target.value)
                         }
-                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500 h-10 sm:h-11"
                         required
                       />
                     </div>
@@ -404,7 +410,7 @@ const Header = () => {
                     <div className="space-y-2">
                       <Label
                         htmlFor="contact-message"
-                        className="text-gray-200"
+                        className="text-gray-200 text-sm"
                       >
                         Message
                       </Label>
@@ -415,24 +421,24 @@ const Header = () => {
                         onChange={(e) =>
                           handleContactInputChange("message", e.target.value)
                         }
-                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-none"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500 min-h-[80px] sm:min-h-[100px] resize-none"
                         required
                       />
                     </div>
 
-                    <div className="flex justify-end space-x-3 pt-4">
+                    <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
                       <Button
                         type="button"
                         variant="ghost"
                         onClick={() => setIsContactModalOpen(false)}
-                        className="bg-white/10 border border-white/20 text-gray-200 hover:bg-white/20 hover:text-white transition-colors"
+                        className="bg-white/10 border border-white/20 text-gray-200 hover:bg-white/20 hover:text-white transition-colors order-2 sm:order-1"
                       >
                         Cancel
                       </Button>
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        className="bg-blue-600 hover:bg-blue-700 text-white order-1 sm:order-2"
                       >
                         {isSubmitting ? (
                           <>

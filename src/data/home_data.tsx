@@ -57,6 +57,20 @@ export const stats = [
 
 export const features = [
   {
+    icon: <Brain className="h-8 w-8 text-purple-600" />,
+    title: "AI Chat Assistant",
+    description:
+      "Interactive AI assistant for code explanations and improvement suggestions",
+    capabilities: [
+      "Natural language code explanations",
+      "Personalized best practices",
+      "Intelligent refactoring suggestions",
+      "Learning-based recommendations",
+    ],
+    color: "purple-500",
+    bgColor: "purple-50",
+  },
+  {
     icon: <Code className="h-8 w-8 text-blue-600" />,
     title: "Smart Code Analysis",
     description:
@@ -84,20 +98,7 @@ export const features = [
     color: "green-500",
     bgColor: "green-50",
   },
-  {
-    icon: <Brain className="h-8 w-8 text-purple-600" />,
-    title: "AI Chat Assistant",
-    description:
-      "Interactive AI assistant for code explanations and improvement suggestions",
-    capabilities: [
-      "Natural language code explanations",
-      "Personalized best practices",
-      "Intelligent refactoring suggestions",
-      "Learning-based recommendations",
-    ],
-    color: "purple-500",
-    bgColor: "purple-50",
-  },
+
   {
     icon: <Zap className="h-8 w-8 text-yellow-600" />,
     title: "Real-time Feedback",
